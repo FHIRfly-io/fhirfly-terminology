@@ -1,56 +1,98 @@
-import type { DisplayField } from "./common.js";
-
 /**
- * FDA Label lookup result - compact shape.
+ * FDA Label metadata returned in API responses.
  */
-export interface FdaLabelCompact extends DisplayField {
+export interface FdaLabelMetadata {
+  id: string;
   set_id: string;
-  product_name: string;
-  labeler_name: string;
+  version: string;
+  effective_time: string;
+  brand_name: string[];
+  generic_name: string[];
+  manufacturer_name: string[];
+  product_ndc: string[];
+  package_ndc: string[];
+  rxcui: string[];
+  product_type: string[];
+  route: string[];
+  pharm_class_epc: string[];
+  available_sections: string[];
 }
 
 /**
- * FDA Label lookup result - standard shape.
+ * FDA Label data returned from lookup.
+ * The API uses a metadata + sections model instead of compact/standard/full shapes.
  */
-export interface FdaLabelStandard extends FdaLabelCompact {
-  version?: number;
-  effective_time?: string;
-  product_type?: string;
-  route?: string[];
-  substance_name?: string[];
-  indications_and_usage?: string;
-  dosage_and_administration?: string;
+export interface FdaLabelData {
+  metadata: FdaLabelMetadata;
+  /** Section content, keyed by section name (e.g., "boxed_warning", "dosage_and_administration") */
+  sections?: Record<string, string[]>;
 }
 
 /**
- * FDA Label lookup result - full shape.
+ * Known section bundle names for common use cases.
  */
-export interface FdaLabelFull extends FdaLabelStandard {
-  spl_id?: string;
-  document_type?: string;
-  warnings?: string;
-  precautions?: string;
-  contraindications?: string;
-  adverse_reactions?: string;
-  drug_interactions?: string;
-  overdosage?: string;
-  clinical_pharmacology?: string;
-  mechanism_of_action?: string;
-  pharmacodynamics?: string;
-  pharmacokinetics?: string;
-  how_supplied?: string;
-  storage_and_handling?: string;
-  boxed_warning?: string;
-  pregnancy?: string;
-  nursing_mothers?: string;
-  pediatric_use?: string;
-  geriatric_use?: string;
+export type FdaLabelBundleName =
+  | "safety"
+  | "dosing"
+  | "interactions"
+  | "pregnancy"
+  | "ingredients";
+
+/**
+ * Options for FDA Label lookup (replaces standard LookupOptions shape).
+ */
+export interface FdaLabelLookupOptions {
+  /** Specific section keys to fetch (e.g., ["boxed_warning", "dosage_and_administration"]) */
+  sections?: string[];
+  /** Predefined bundle of sections (e.g., "safety", "dosing") */
+  bundle?: FdaLabelBundleName;
 }
 
 /**
- * FDA Label response type based on shape.
+ * FDA Label search result - compact shape (used by search endpoint).
  */
-export type FdaLabelData = FdaLabelCompact | FdaLabelStandard | FdaLabelFull;
+export interface FdaLabelSearchCompact {
+  spl_id: string;
+  set_id: string;
+  brand_name: string | null;
+  generic_name: string | null;
+  manufacturer: string | null;
+  product_type: string | null;
+  route: string[];
+}
+
+/**
+ * FDA Label search result - standard shape (used by search endpoint).
+ */
+export interface FdaLabelSearchStandard extends FdaLabelSearchCompact {
+  substance_name: string[];
+  pharm_class_epc: string[];
+  rxcui: string[];
+  product_ndc: string[];
+  application_number: string[];
+  effective_time: string;
+  version: string;
+}
+
+/**
+ * FDA Label search result - full shape (used by search endpoint).
+ */
+export interface FdaLabelSearchFull extends FdaLabelSearchStandard {
+  pharm_class_moa: string[];
+  pharm_class_pe: string[];
+  pharm_class_cs: string[];
+  package_ndc: string[];
+  unii: string[];
+  nui: string[];
+}
+
+/**
+ * FDA Label search result type.
+ */
+export type FdaLabelSearchData =
+  | FdaLabelSearchCompact
+  | FdaLabelSearchStandard
+  | FdaLabelSearchFull;
 
 /**
  * FDA Label search parameters.

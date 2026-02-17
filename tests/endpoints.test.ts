@@ -71,7 +71,7 @@ describe("Endpoint lookup methods", () => {
     describe("lookup", () => {
       it("makes GET request to correct URL", async () => {
         mockFetch.mockResolvedValueOnce(
-          apiResponse({ ndc: "0069-0151-01", product_name: "Lipitor" })
+          apiResponse({ ndc: "0069-0151-01", type: "package", name: "Lipitor", generic: "Atorvastatin", labeler: "Pfizer", active: true })
         );
 
         await client.ndc.lookup("0069-0151-01");
@@ -83,7 +83,7 @@ describe("Endpoint lookup methods", () => {
 
       it("encodes special characters in NDC code", async () => {
         mockFetch.mockResolvedValueOnce(
-          apiResponse({ ndc: "0069/0151", product_name: "Test" })
+          apiResponse({ ndc: "0069/0151", type: "product", name: "Test", generic: null, labeler: null, active: true })
         );
 
         await client.ndc.lookup("0069/0151");
@@ -93,7 +93,7 @@ describe("Endpoint lookup methods", () => {
       });
 
       it("includes shape option in query string", async () => {
-        mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123" }));
+        mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true }));
 
         await client.ndc.lookup("123", { shape: "full" });
 
@@ -102,7 +102,7 @@ describe("Endpoint lookup methods", () => {
       });
 
       it("includes include option in query string", async () => {
-        mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123" }));
+        mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true }));
 
         await client.ndc.lookup("123", { include: ["display"] });
 
@@ -114,16 +114,21 @@ describe("Endpoint lookup methods", () => {
         mockFetch.mockResolvedValueOnce(
           apiResponse({
             ndc: "0069-0151-01",
-            ndc11: "00069015101",
-            product_name: "Lipitor",
+            type: "package",
+            brand_name: "Lipitor",
+            generic_name: "Atorvastatin Calcium",
             labeler_name: "Pfizer",
+            dosage_form: "TABLET",
+            route: ["ORAL"],
+            strength: "10 mg",
+            rxcui: ["617312"],
+            is_active: true,
           })
         );
 
         const result = await client.ndc.lookup("0069-0151-01");
 
         expect(result.data.ndc).toBe("0069-0151-01");
-        expect(result.data.product_name).toBe("Lipitor");
         expect(result.meta.shape).toBe("standard");
       });
 
@@ -136,7 +141,7 @@ describe("Endpoint lookup methods", () => {
       });
 
       it("sends x-api-key header", async () => {
-        mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123" }));
+        mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true }));
 
         await client.ndc.lookup("123");
 
@@ -148,7 +153,7 @@ describe("Endpoint lookup methods", () => {
     describe("lookupMany", () => {
       it("makes POST request to batch endpoint", async () => {
         mockFetch.mockResolvedValueOnce(
-          batchResponse([{ input: "123", status: "ok", data: { ndc: "123" } }])
+          batchResponse([{ input: "123", status: "ok", data: { ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true } }])
         );
 
         await client.ndc.lookupMany(["123", "456"]);
@@ -180,7 +185,7 @@ describe("Endpoint lookup methods", () => {
       it("returns batch response with count and status for each result", async () => {
         mockFetch.mockResolvedValueOnce(
           batchResponse([
-            { input: "123", status: "ok", data: { ndc: "123" } },
+            { input: "123", status: "ok", data: { ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true } },
             { input: "456", status: "not_found" },
           ])
         );
@@ -202,7 +207,7 @@ describe("Endpoint lookup methods", () => {
     describe("lookup", () => {
       it("makes GET request to correct URL", async () => {
         mockFetch.mockResolvedValueOnce(
-          apiResponse({ npi: "1234567890", name: "Dr. Smith" })
+          apiResponse({ npi: "1234567890", name: "Dr. Smith", type: "individual", specialty: "Internal Medicine", location: "Dallas, TX", active: true })
         );
 
         await client.npi.lookup("1234567890");
@@ -216,9 +221,13 @@ describe("Endpoint lookup methods", () => {
           apiResponse({
             npi: "1234567890",
             entity_type: "individual",
-            name: "Dr. John Smith",
-            first_name: "John",
-            last_name: "Smith",
+            name: { first: "John", last: "Smith", credential: "MD" },
+            organization_name: null,
+            taxonomies: [{ code: "207R00000X", primary: true, classification: "Internal Medicine", specialization: null, display_name: "Internal Medicine" }],
+            practice_address: { city: "Dallas", state: "TX" },
+            enumeration_date: "2005-01-15",
+            last_update_date: "2024-01-01",
+            is_active: true,
           })
         );
 
@@ -226,7 +235,6 @@ describe("Endpoint lookup methods", () => {
 
         expect(result.data.npi).toBe("1234567890");
         expect(result.data.entity_type).toBe("individual");
-        expect(result.data.name).toBe("Dr. John Smith");
       });
     });
 
@@ -299,8 +307,10 @@ describe("Endpoint lookup methods", () => {
       it("makes GET request to correct URL", async () => {
         mockFetch.mockResolvedValueOnce(
           apiResponse({
-            loinc_num: "2345-7",
-            long_common_name: "Glucose [Mass/volume] in Serum or Plasma",
+            code: "2345-7",
+            display_name: "Glucose [Mass/volume] in Serum or Plasma",
+            shortname: "Glucose SerPl-mCnc",
+            class: "CHEM",
             component: "Glucose",
           })
         );
@@ -312,7 +322,7 @@ describe("Endpoint lookup methods", () => {
       });
 
       it("encodes LOINC codes with hyphens correctly", async () => {
-        mockFetch.mockResolvedValueOnce(apiResponse({ loinc_num: "2345-7" }));
+        mockFetch.mockResolvedValueOnce(apiResponse({ code: "2345-7", display_name: "Glucose", shortname: null, class: "CHEM", component: "Glucose" }));
 
         await client.loinc.lookup("2345-7");
 
@@ -324,18 +334,18 @@ describe("Endpoint lookup methods", () => {
       it("returns LOINC data", async () => {
         mockFetch.mockResolvedValueOnce(
           apiResponse({
-            loinc_num: "2345-7",
-            long_common_name: "Glucose",
-            component: "Glucose",
+            code: "2345-7",
+            display_name: "Glucose [Mass/volume] in Serum or Plasma",
+            shortname: "Glucose SerPl-mCnc",
             class: "CHEM",
-            system: "Ser/Plas",
+            component: "Glucose",
           })
         );
 
         const result = await client.loinc.lookup("2345-7");
 
-        expect(result.data.loinc_num).toBe("2345-7");
-        expect(result.data.component).toBe("Glucose");
+        expect(result.data.code).toBe("2345-7");
+        expect(result.data.display_name).toBe("Glucose [Mass/volume] in Serum or Plasma");
       });
     });
 
@@ -361,7 +371,7 @@ describe("Endpoint lookup methods", () => {
           apiResponse({
             code: "E11.9",
             type: "cm",
-            description: "Type 2 diabetes mellitus without complications",
+            display: "Type 2 diabetes mellitus without complications",
           })
         );
 
@@ -386,7 +396,7 @@ describe("Endpoint lookup methods", () => {
           apiResponse({
             code: "E11.9",
             type: "cm",
-            description: "Type 2 diabetes mellitus without complications",
+            display: "Type 2 diabetes mellitus without complications",
             billable: true,
             chapter: "Chapter IV",
           })
@@ -403,7 +413,7 @@ describe("Endpoint lookup methods", () => {
           apiResponse({
             code: "0BJ08ZZ",
             type: "pcs",
-            description: "Inspection of Tracheobronchial Tree",
+            display: "Inspection of Tracheobronchial Tree",
             body_system: "Respiratory System",
             root_operation: "Inspection",
           })
@@ -436,8 +446,8 @@ describe("Endpoint lookup methods", () => {
       it("makes GET request to correct URL", async () => {
         mockFetch.mockResolvedValueOnce(
           apiResponse({
-            cvx_code: "208",
-            short_description: "COVID-19, mRNA, LNP-S, PF, 30 mcg/0.3 mL dose",
+            code: "208",
+            display: "COVID-19, mRNA, LNP-S, PF, 30 mcg/0.3 mL dose",
           })
         );
 
@@ -450,17 +460,16 @@ describe("Endpoint lookup methods", () => {
       it("returns vaccine data", async () => {
         mockFetch.mockResolvedValueOnce(
           apiResponse({
-            cvx_code: "208",
-            short_description: "COVID-19 Pfizer",
-            full_vaccine_name: "COVID-19, mRNA, LNP-S, PF, 30 mcg/0.3 mL dose",
-            status: "Active",
+            code: "208",
+            display: "COVID-19 Pfizer",
+            status: "active",
           })
         );
 
         const result = await client.cvx.lookup("208");
 
-        expect(result.data.cvx_code).toBe("208");
-        expect(result.data.short_description).toBe("COVID-19 Pfizer");
+        expect(result.data.code).toBe("208");
+        expect(result.data.display).toBe("COVID-19 Pfizer");
       });
     });
 
@@ -484,8 +493,9 @@ describe("Endpoint lookup methods", () => {
       it("makes GET request to correct URL", async () => {
         mockFetch.mockResolvedValueOnce(
           apiResponse({
-            mvx_code: "PFR",
-            manufacturer_name: "Pfizer, Inc",
+            code: "PFR",
+            display: "Pfizer, Inc",
+            status: "active",
           })
         );
 
@@ -498,16 +508,16 @@ describe("Endpoint lookup methods", () => {
       it("returns manufacturer data", async () => {
         mockFetch.mockResolvedValueOnce(
           apiResponse({
-            mvx_code: "PFR",
-            manufacturer_name: "Pfizer, Inc",
-            status: "Active",
+            code: "PFR",
+            display: "Pfizer, Inc",
+            status: "active",
           })
         );
 
         const result = await client.mvx.lookup("PFR");
 
-        expect(result.data.mvx_code).toBe("PFR");
-        expect(result.data.manufacturer_name).toBe("Pfizer, Inc");
+        expect(result.data.code).toBe("PFR");
+        expect(result.data.display).toBe("Pfizer, Inc");
       });
     });
 
@@ -531,9 +541,22 @@ describe("Endpoint lookup methods", () => {
       it("makes GET request to correct URL", async () => {
         mockFetch.mockResolvedValueOnce(
           apiResponse({
-            set_id: "abc123-def456",
-            product_name: "TYLENOL",
-            labeler_name: "Johnson & Johnson",
+            metadata: {
+              id: "abc123",
+              set_id: "abc123-def456",
+              version: "1",
+              effective_time: "20240101",
+              brand_name: ["TYLENOL"],
+              generic_name: ["acetaminophen"],
+              manufacturer_name: ["Johnson & Johnson"],
+              product_ndc: [],
+              package_ndc: [],
+              rxcui: [],
+              product_type: ["HUMAN OTC DRUG"],
+              route: ["ORAL"],
+              pharm_class_epc: [],
+              available_sections: ["dosage_and_administration", "warnings"],
+            },
           })
         );
 
@@ -543,27 +566,53 @@ describe("Endpoint lookup methods", () => {
         expect(url).toBe("https://api.fhirfly.io/v1/fda-label/abc123-def456");
       });
 
-      it("returns label data", async () => {
+      it("returns label metadata", async () => {
         mockFetch.mockResolvedValueOnce(
           apiResponse({
-            set_id: "abc123",
-            product_name: "TYLENOL Extra Strength",
-            labeler_name: "Johnson & Johnson",
-            product_type: "HUMAN OTC DRUG",
+            metadata: {
+              id: "abc123",
+              set_id: "abc123-def456",
+              version: "1",
+              effective_time: "20240101",
+              brand_name: ["TYLENOL Extra Strength"],
+              generic_name: ["acetaminophen"],
+              manufacturer_name: ["Johnson & Johnson"],
+              product_ndc: [],
+              package_ndc: [],
+              rxcui: [],
+              product_type: ["HUMAN OTC DRUG"],
+              route: ["ORAL"],
+              pharm_class_epc: [],
+              available_sections: [],
+            },
           })
         );
 
         const result = await client.fdaLabels.lookup("abc123");
 
-        expect(result.data.set_id).toBe("abc123");
-        expect(result.data.product_name).toBe("TYLENOL Extra Strength");
+        expect(result.data.metadata.set_id).toBe("abc123-def456");
+        expect(result.data.metadata.brand_name).toContain("TYLENOL Extra Strength");
       });
 
       it("accepts NDC codes (auto-detected by API)", async () => {
         mockFetch.mockResolvedValueOnce(
           apiResponse({
-            set_id: "abc123",
-            product_name: "TYLENOL",
+            metadata: {
+              id: "abc123",
+              set_id: "abc123",
+              version: "1",
+              effective_time: "20240101",
+              brand_name: ["TYLENOL"],
+              generic_name: [],
+              manufacturer_name: [],
+              product_ndc: [],
+              package_ndc: [],
+              rxcui: [],
+              product_type: [],
+              route: [],
+              pharm_class_epc: [],
+              available_sections: [],
+            },
           })
         );
 
@@ -571,6 +620,68 @@ describe("Endpoint lookup methods", () => {
 
         const [url] = mockFetch.mock.calls[0]!;
         expect(url).toBe("https://api.fhirfly.io/v1/fda-label/0045-0502-60");
+      });
+
+      it("passes sections as query parameter", async () => {
+        mockFetch.mockResolvedValueOnce(
+          apiResponse({
+            metadata: {
+              id: "abc",
+              set_id: "abc",
+              version: "1",
+              effective_time: "20240101",
+              brand_name: [],
+              generic_name: [],
+              manufacturer_name: [],
+              product_ndc: [],
+              package_ndc: [],
+              rxcui: [],
+              product_type: [],
+              route: [],
+              pharm_class_epc: [],
+              available_sections: [],
+            },
+            sections: {
+              boxed_warning: ["Warning text here"],
+            },
+          })
+        );
+
+        await client.fdaLabels.lookup("abc", {
+          sections: ["boxed_warning", "warnings"],
+        });
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("sections=boxed_warning%2Cwarnings");
+      });
+
+      it("passes bundle as query parameter", async () => {
+        mockFetch.mockResolvedValueOnce(
+          apiResponse({
+            metadata: {
+              id: "abc",
+              set_id: "abc",
+              version: "1",
+              effective_time: "20240101",
+              brand_name: [],
+              generic_name: [],
+              manufacturer_name: [],
+              product_ndc: [],
+              package_ndc: [],
+              rxcui: [],
+              product_type: [],
+              route: [],
+              pharm_class_epc: [],
+              available_sections: [],
+            },
+            sections: {},
+          })
+        );
+
+        await client.fdaLabels.lookup("abc", { bundle: "safety" });
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("bundle=safety");
       });
     });
 
@@ -682,7 +793,7 @@ describe("Endpoint lookup methods", () => {
   // ===========================================================================
   describe("Options handling", () => {
     it("combines shape and include options", async () => {
-      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123" }));
+      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true }));
 
       await client.ndc.lookup("123", { shape: "full", include: ["display"] });
 
@@ -692,7 +803,7 @@ describe("Endpoint lookup methods", () => {
     });
 
     it("handles multiple include values", async () => {
-      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123" }));
+      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true }));
 
       // Currently only "display" is supported, but test array handling
       await client.ndc.lookup("123", { include: ["display"] });
@@ -702,7 +813,7 @@ describe("Endpoint lookup methods", () => {
     });
 
     it("omits query string when no options provided", async () => {
-      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123" }));
+      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true }));
 
       await client.ndc.lookup("123");
 
@@ -1070,7 +1181,7 @@ describe("Endpoint lookup methods", () => {
   // ===========================================================================
   describe("Request headers", () => {
     it("sends Content-Type header", async () => {
-      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123" }));
+      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true }));
 
       await client.ndc.lookup("123");
 
@@ -1079,7 +1190,7 @@ describe("Endpoint lookup methods", () => {
     });
 
     it("sends Accept header", async () => {
-      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123" }));
+      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true }));
 
       await client.ndc.lookup("123");
 
@@ -1088,7 +1199,7 @@ describe("Endpoint lookup methods", () => {
     });
 
     it("sends User-Agent header", async () => {
-      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123" }));
+      mockFetch.mockResolvedValueOnce(apiResponse({ ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true }));
 
       await client.ndc.lookup("123");
 

@@ -46,7 +46,7 @@ describe("Search endpoints", () => {
   describe("NDC search", () => {
     it("builds correct query string for text search", async () => {
       mockFetch.mockResolvedValueOnce(
-        searchResponse([{ ndc: "0069-0151-01", product_name: "Lipitor" }])
+        searchResponse([{ ndc: "0069-0151-01", type: "package", name: "Lipitor", generic: "Atorvastatin", labeler: "Pfizer", active: true }])
       );
 
       await client.ndc.search({ q: "advil" });
@@ -102,7 +102,7 @@ describe("Search endpoints", () => {
         headers: new Headers(),
         json: () =>
           Promise.resolve({
-            items: [{ ndc: "123", product_name: "Test" }],
+            items: [{ ndc: "123", type: "product", name: "Test", generic: null, labeler: null, active: true }],
             total: 100,
             total_capped: false,
             has_more: true,
@@ -135,7 +135,7 @@ describe("Search endpoints", () => {
   describe("NPI search", () => {
     it("builds correct query string", async () => {
       mockFetch.mockResolvedValueOnce(
-        searchResponse([{ npi: "1234567890", name: "Dr. Smith" }])
+        searchResponse([{ npi: "1234567890", name: "Dr. Smith", type: "individual", specialty: "Cardiology", location: "Los Angeles, CA", active: true }])
       );
 
       await client.npi.search({
@@ -192,7 +192,7 @@ describe("Search endpoints", () => {
   describe("LOINC search", () => {
     it("builds correct query string", async () => {
       mockFetch.mockResolvedValueOnce(
-        searchResponse([{ loinc_num: "2345-7", long_common_name: "Glucose" }])
+        searchResponse([{ code: "2345-7", display_name: "Glucose [Mass/volume] in Serum or Plasma", shortname: "Glucose SerPl-mCnc", class: "CHEM", component: "Glucose" }])
       );
 
       await client.loinc.search({
@@ -222,7 +222,7 @@ describe("Search endpoints", () => {
   describe("ICD-10 search", () => {
     it("builds correct query string for CM codes", async () => {
       mockFetch.mockResolvedValueOnce(
-        searchResponse([{ code: "E11.9", description: "Type 2 diabetes" }])
+        searchResponse([{ code: "E11.9", display: "Type 2 diabetes" }])
       );
 
       await client.icd10.search({
@@ -256,7 +256,7 @@ describe("Search endpoints", () => {
   describe("CVX search", () => {
     it("builds correct query string", async () => {
       mockFetch.mockResolvedValueOnce(
-        searchResponse([{ cvx_code: "208", short_description: "COVID-19" }])
+        searchResponse([{ code: "208", display: "COVID-19" }])
       );
 
       await client.cvx.search({
@@ -283,7 +283,7 @@ describe("Search endpoints", () => {
   describe("MVX search", () => {
     it("builds correct query string", async () => {
       mockFetch.mockResolvedValueOnce(
-        searchResponse([{ mvx_code: "PFR", manufacturer_name: "Pfizer" }])
+        searchResponse([{ code: "PFR", display: "Pfizer, Inc", status: "active" }])
       );
 
       await client.mvx.search({ q: "pfizer" });
@@ -306,7 +306,7 @@ describe("Search endpoints", () => {
   describe("FDA Labels search", () => {
     it("builds correct query string", async () => {
       mockFetch.mockResolvedValueOnce(
-        searchResponse([{ set_id: "abc", product_name: "Advil" }])
+        searchResponse([{ spl_id: "abc", set_id: "abc-def", brand_name: "Advil", generic_name: "ibuprofen", manufacturer: "Pfizer", product_type: "HUMAN OTC DRUG", route: ["ORAL"] }])
       );
 
       await client.fdaLabels.search({

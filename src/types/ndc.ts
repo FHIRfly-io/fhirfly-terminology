@@ -2,58 +2,87 @@ import type { DisplayField } from "./common.js";
 import type { SnomedEnrichmentStandard, SnomedEnrichmentFull } from "./snomed.js";
 
 /**
- * Active ingredient in a drug product.
+ * Active ingredient in a drug product (full shape only).
  */
 export interface ActiveIngredient {
   name: string;
-  strength?: string;
-  unit?: string;
+  strength: string | null;
+  unit: string | null;
 }
 
 /**
- * Packaging information for an NDC.
+ * NDC type: product-level or package-level.
  */
-export interface NdcPackaging {
-  ndc: string;
-  description?: string;
-  package_ndc?: string;
-}
+export type NdcType = "package" | "product";
 
 /**
  * NDC lookup result - compact shape.
+ * Minimal data for lists, autocomplete, search results.
  */
 export interface NdcCompact extends DisplayField {
   ndc: string;
-  ndc11: string;
-  product_name: string;
-  labeler_name: string;
+  type: NdcType;
+  name: string;
+  generic: string | null;
+  labeler: string | null;
+  active: boolean;
 }
 
 /**
  * NDC lookup result - standard shape.
+ * Core structured data for most API integrations.
  */
-export interface NdcStandard extends NdcCompact {
-  generic_name?: string;
-  dosage_form?: string;
-  route?: string;
-  active_ingredients: ActiveIngredient[];
-  dea_schedule?: string;
-  marketing_status?: string;
+export interface NdcStandard extends DisplayField {
+  ndc: string;
+  type: NdcType;
+  /** Package-specific: hyphenated 5-4-2 NDC */
+  ndc11_hyph?: string;
+  /** Package-specific: parent product NDC */
+  product_ndc?: string;
+  /** Package-specific: package description */
+  package_description?: string;
+  brand_name: string | null;
+  generic_name: string | null;
+  labeler_name: string | null;
+  dosage_form: string | null;
+  route: string[] | null;
+  strength: string | null;
+  rxcui: string[];
+  is_active: boolean;
   /** SNOMED CT mappings (derived via RxNorm, added by enrichment) */
   snomed?: SnomedEnrichmentStandard[];
 }
 
 /**
  * NDC lookup result - full shape.
+ * Complete data with provenance for AI agents and auditing.
  */
-export interface NdcFull extends Omit<NdcStandard, "snomed"> {
-  application_number?: string;
-  product_type?: string;
-  marketing_start_date?: string;
-  marketing_end_date?: string;
-  listing_expiration_date?: string;
-  pharm_class?: string[];
-  packaging?: NdcPackaging[];
+export interface NdcFull extends DisplayField {
+  ndc: string;
+  type: NdcType;
+  /** Package-specific: hyphenated 5-4-2 NDC */
+  ndc11_hyph?: string;
+  /** Package-specific: parent product NDC */
+  product_ndc?: string;
+  /** Package-specific: package description */
+  package_description?: string;
+  brand_name: string | null;
+  generic_name: string | null;
+  labeler_name: string | null;
+  dosage_form: string | null;
+  route: string[] | null;
+  strength: string | null;
+  rxcui: string[];
+  is_active: boolean;
+  marketing_category: string | null;
+  application_number: string | null;
+  product_type: string | null;
+  listing_expiration_date: string | null;
+  is_generic: boolean;
+  generic_basis: string[];
+  active_ingredients: ActiveIngredient[];
+  pharm_class: string[];
+  dea_schedule: string | null;
   /** SNOMED CT mappings with FHIR coding (derived via RxNorm, added by enrichment) */
   snomed?: SnomedEnrichmentFull[];
 }
