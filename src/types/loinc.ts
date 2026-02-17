@@ -1,56 +1,108 @@
 import type { DisplayField } from "./common.js";
 
 /**
+ * LOINC semantic axis parts.
+ */
+export interface LoincParts {
+  component: string | null;
+  property: string | null;
+  time_aspct: string | null;
+  system: string | null;
+  scale_typ: string | null;
+  method_typ: string | null;
+}
+
+/**
+ * LOINC example unit information.
+ */
+export interface LoincUnits {
+  example_units: string | null;
+  example_ucum_units: string | null;
+}
+
+/**
+ * LOINC FHIR coding representation.
+ */
+export interface LoincFhirCoding {
+  system: string;
+  code: string;
+  display: string;
+}
+
+/**
+ * Ranking information for common tests/orders.
+ */
+export interface LoincRanks {
+  common_test_rank: number | null;
+  common_order_rank: number | null;
+}
+
+/**
+ * Source organization and copyright info.
+ */
+export interface LoincSourceOrg {
+  external_copyright_notice: string | null;
+  external_copyright_link: string | null;
+  org_name: string | null;
+  org_terms_of_use: string | null;
+  org_url: string | null;
+}
+
+/**
  * LOINC lookup result - compact shape.
+ * Minimal data for lists, autocomplete, search results.
  */
 export interface LoincCompact extends DisplayField {
-  loinc_num: string;
-  long_common_name: string;
-  component: string;
+  code: string;
+  display_name: string;
+  shortname: string | null;
+  class: string | null;
+  component: string | null;
 }
 
 /**
  * LOINC lookup result - standard shape.
+ * Core structured data for most API integrations.
  */
-export interface LoincStandard extends LoincCompact {
-  short_name?: string;
-  class?: string;
-  class_type?: number;
-  property?: string;
-  time_aspect?: string;
-  system?: string;
-  scale_type?: string;
-  method_type?: string;
-  status?: string;
-  order_obs?: string;
+export interface LoincStandard extends DisplayField {
+  code: string;
+  display_name: string;
+  shortname: string | null;
+  long_name: string | null;
+  class: string | null;
+  status: string;
+  order_obs: string | null;
+  parts: LoincParts;
+  units: LoincUnits;
+  map_to: string[];
+  fhir_coding: LoincFhirCoding;
 }
 
 /**
  * LOINC lookup result - full shape.
+ * Complete data with provenance for AI agents.
  */
-export interface LoincFull extends LoincStandard {
-  definition_description?: string;
-  consumer_name?: string;
-  survey_question_text?: string;
-  survey_question_source?: string;
-  units_required?: string;
-  submitted_units?: string;
-  related_names_2?: string;
-  example_units?: string;
-  example_ucum_units?: string;
-  example_si_ucum_units?: string;
-  status_reason?: string;
-  status_text?: string;
-  change_reason_public?: string;
-  common_test_rank?: number;
-  common_order_rank?: number;
-  hl7_field_subfield_id?: string;
-  external_copyright_notice?: string;
-  panel_type?: string;
-  ask_at_order_entry?: string;
-  associated_observations?: string;
-  version_first_released?: string;
-  version_last_changed?: string;
+export interface LoincFull extends DisplayField {
+  code: string;
+  display_name: string;
+  shortname: string | null;
+  long_name: string | null;
+  consumer_name: string | null;
+  class: string | null;
+  classtype: number | null;
+  status: string;
+  status_reason: string | null;
+  order_obs: string | null;
+  parts: LoincParts;
+  units: LoincUnits;
+  map_to: string[];
+  map_to_comment: string | null;
+  fhir_coding: LoincFhirCoding;
+  version: string;
+  version_first_released: string | null;
+  version_last_changed: string | null;
+  ranks: LoincRanks;
+  source_org: LoincSourceOrg;
 }
 
 /**

@@ -20,7 +20,7 @@ export type {
 // NDC types
 export type {
   ActiveIngredient,
-  NdcPackaging,
+  NdcType,
   NdcCompact,
   NdcStandard,
   NdcFull,
@@ -30,9 +30,13 @@ export type {
 
 // NPI types
 export type {
+  PersonName,
   NpiAddress,
-  NpiTaxonomy,
-  NpiIdentifier,
+  EnrichedTaxonomy,
+  SecondaryLocation,
+  Deactivation,
+  AuthorizedOfficial,
+  OtherIdentifier,
   NpiCompact,
   NpiStandard,
   NpiFull,
@@ -52,6 +56,11 @@ export type {
 
 // LOINC types
 export type {
+  LoincParts,
+  LoincUnits,
+  LoincFhirCoding,
+  LoincRanks,
+  LoincSourceOrg,
   LoincCompact,
   LoincStandard,
   LoincFull,
@@ -80,6 +89,8 @@ export type {
 
 // MVX types
 export type {
+  MvxFhirCoding,
+  MvxIngest,
   MvxCompact,
   MvxStandard,
   MvxFull,
@@ -89,10 +100,14 @@ export type {
 
 // FDA Labels types
 export type {
-  FdaLabelCompact,
-  FdaLabelStandard,
-  FdaLabelFull,
+  FdaLabelMetadata,
   FdaLabelData,
+  FdaLabelBundleName,
+  FdaLabelLookupOptions,
+  FdaLabelSearchCompact,
+  FdaLabelSearchStandard,
+  FdaLabelSearchFull,
+  FdaLabelSearchData,
   FdaLabelSearchParams,
 } from "./fda-labels.js";
 
