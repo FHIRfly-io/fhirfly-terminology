@@ -1,3 +1,5 @@
+// Copyright 2026 FHIRfly.io LLC. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root.
 /**
  * IPS (International Patient Set) category.
  * Used to organize SNOMED concepts by their clinical use.

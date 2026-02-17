@@ -1,3 +1,5 @@
+// Copyright 2026 FHIRfly.io LLC. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root.
 import { HttpClient, TokenManager, type HttpClientConfig } from "./http.js";
 import { NdcEndpoint } from "./endpoints/ndc.js";
 import { NpiEndpoint } from "./endpoints/npi.js";
