@@ -22,6 +22,9 @@ yarn-error.log*
 .env.local
 .env.*.local
 
+# Identity blocklist (contains personal patterns — never commit)
+.identity-blocklist
+
 # Test coverage
 coverage/
 
