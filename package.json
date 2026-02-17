@@ -1,0 +1,73 @@
+{
+  "name": "@fhirfly-io/terminology",
+  "version": "0.6.0",
+  "description": "Official FHIRfly SDK for Node.js - Healthcare reference data APIs",
+  "author": "FHIRfly.io LLC <admin@fhirfly.io>",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://fhirfly.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FHIRfly-io/fhirfly-terminology.git"
+  },
+  "bugs": {
+    "url": "https://github.com/FHIRfly-io/fhirfly-terminology/issues"
+  },
+  "keywords": [
+    "fhirfly",
+    "healthcare",
+    "api",
+    "ndc",
+    "npi",
+    "rxnorm",
+    "loinc",
+    "icd-10",
+    "fhir",
+    "medical",
+    "clinical",
+    "drug-codes",
+    "provider-lookup"
+  ],
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      },
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "lint": "eslint src",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.0.0",
+    "vitest": "^4.0.0"
+  }
+}
