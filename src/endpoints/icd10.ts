@@ -47,7 +47,7 @@ export class Icd10Endpoint {
    *
    * Codes can be a mix of CM (diagnoses) and PCS (procedures).
    *
-   * @param codes - Array of ICD-10 codes (max 500)
+   * @param codes - Array of ICD-10 codes (max 100)
    * @param options - Response shape, include, and batch options
    * @returns Batch response with results for each code
    */

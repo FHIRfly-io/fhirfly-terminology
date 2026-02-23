@@ -24,7 +24,7 @@ export interface LookupOptions {
  * Common options for batch lookup methods.
  */
 export interface BatchLookupOptions extends LookupOptions {
-  /** Maximum codes per batch (default: 100, max: 500) */
+  /** Maximum codes per batch. Limits vary by endpoint: NDC=500, FDA Labels=50, all others=100. */
   batchSize?: number;
 }
 

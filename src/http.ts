@@ -145,7 +145,7 @@ export class HttpClient {
       timeout: config.timeout ?? 30000,
       maxRetries: config.maxRetries ?? 3,
       retryDelay: config.retryDelay ?? 1000,
-      userAgent: config.userAgent ?? `@fhirfly/sdk/0.1.0 Node.js/${process.version}`,
+      userAgent: config.userAgent ?? `@fhirfly-io/terminology/0.7.1 Node.js/${process.version}`,
     };
   }
 

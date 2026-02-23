@@ -37,7 +37,7 @@ export class RxNormEndpoint {
   /**
    * Look up multiple RxCUIs in a single request.
    *
-   * @param rxcuis - Array of RxCUIs (max 500)
+   * @param rxcuis - Array of RxCUIs (max 100)
    * @param options - Response shape, include, and batch options
    * @returns Batch response with results for each RxCUI
    */

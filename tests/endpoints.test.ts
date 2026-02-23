@@ -1204,7 +1204,7 @@ describe("Endpoint lookup methods", () => {
       await client.ndc.lookup("123");
 
       const [, opts] = mockFetch.mock.calls[0]!;
-      expect(opts.headers["User-Agent"]).toContain("@fhirfly/sdk");
+      expect(opts.headers["User-Agent"]).toContain("@fhirfly-io/terminology");
     });
   });
 });

@@ -37,7 +37,7 @@ export class MvxEndpoint {
   /**
    * Look up multiple MVX codes in a single request.
    *
-   * @param mvxCodes - Array of MVX codes (max 500)
+   * @param mvxCodes - Array of MVX codes (max 100)
    * @param options - Response shape, include, and batch options
    * @returns Batch response with results for each code
    */

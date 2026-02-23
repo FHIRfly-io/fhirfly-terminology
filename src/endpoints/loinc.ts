@@ -37,7 +37,7 @@ export class LoincEndpoint {
   /**
    * Look up multiple LOINC codes in a single request.
    *
-   * @param loincNums - Array of LOINC numbers (max 500)
+   * @param loincNums - Array of LOINC numbers (max 100)
    * @param options - Response shape, include, and batch options
    * @returns Batch response with results for each LOINC
    */

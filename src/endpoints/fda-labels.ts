@@ -72,7 +72,7 @@ export class FdaLabelsEndpoint {
    * Returns metadata only (no sections) for batch efficiency.
    * Identifiers can be Set IDs, NDC codes, or RxCUIs (mixed).
    *
-   * @param identifiers - Array of identifiers (max 500)
+   * @param identifiers - Array of identifiers (max 50)
    * @returns Batch response with results for each identifier
    */
   async lookupMany(

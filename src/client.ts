@@ -99,7 +99,7 @@ export type FhirflyConfig = FhirflyApiKeyConfig | FhirflyOAuthConfig;
  *
  * @example
  * ```ts
- * import { Fhirfly } from "@fhirfly/sdk";
+ * import { Fhirfly } from "@fhirfly-io/terminology";
  *
  * // Option A: API key (simple)
  * const client = new Fhirfly({ apiKey: "ffly_sk_live_..." });
@@ -112,7 +112,7 @@ export type FhirflyConfig = FhirflyApiKeyConfig | FhirflyOAuthConfig;
  *
  * // Look up a drug by NDC
  * const ndc = await client.ndc.lookup("0069-0151-01");
- * console.log(ndc.data.product_name); // "Lipitor"
+ * console.log(ndc.data.brand_name); // "Lipitor"
  * ```
  */
 export class Fhirfly {

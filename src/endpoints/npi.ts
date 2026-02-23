@@ -37,7 +37,7 @@ export class NpiEndpoint {
   /**
    * Look up multiple NPIs in a single request.
    *
-   * @param npis - Array of 10-digit NPI numbers (max 500)
+   * @param npis - Array of 10-digit NPI numbers (max 100)
    * @param options - Response shape, include, and batch options
    * @returns Batch response with results for each NPI
    *

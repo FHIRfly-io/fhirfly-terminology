@@ -37,7 +37,7 @@ export class CvxEndpoint {
   /**
    * Look up multiple CVX codes in a single request.
    *
-   * @param cvxCodes - Array of CVX codes (max 500)
+   * @param cvxCodes - Array of CVX codes (max 100)
    * @param options - Response shape, include, and batch options
    * @returns Batch response with results for each code
    */
