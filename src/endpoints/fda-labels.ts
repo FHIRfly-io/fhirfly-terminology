@@ -1,6 +1,7 @@
 // Copyright 2026 FHIRfly.io LLC. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root.
 import type { HttpClient } from "../http.js";
+import { ValidationError } from "../errors.js";
 import type {
   ApiResponse,
   BatchResponse,
@@ -78,6 +79,8 @@ export class FdaLabelsEndpoint {
   async lookupMany(
     identifiers: string[]
   ): Promise<BatchResponse<FdaLabelData>> {
+    if (identifiers.length === 0) throw new ValidationError("identifiers array must not be empty");
+    if (identifiers.length > 50) throw new ValidationError(`FDA Labels batch lookup supports max 50 identifiers, got ${identifiers.length}`);
     return this.http.post<BatchResponse<FdaLabelData>>(
       "/v1/fda-label/_batch",
       { codes: identifiers }

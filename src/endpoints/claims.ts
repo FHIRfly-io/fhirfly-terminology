@@ -1,6 +1,7 @@
 // Copyright 2026 FHIRfly.io LLC. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root.
 import type { HttpClient } from "../http.js";
+import { ValidationError } from "../errors.js";
 import type {
   NcciClaimType,
   NcciValidateResponse,
@@ -160,6 +161,8 @@ export class ClaimsEndpoint {
    * ```
    */
   async lookupMueMany(codes: string[]): Promise<MueBatchResponse> {
+    if (codes.length === 0) throw new ValidationError("codes array must not be empty");
+    if (codes.length > 100) throw new ValidationError(`MUE batch lookup supports max 100 codes, got ${codes.length}`);
     return this.http.post<MueBatchResponse>("/v1/mue/_batch", { codes });
   }
 
@@ -205,6 +208,8 @@ export class ClaimsEndpoint {
    * ```
    */
   async lookupPfsMany(codes: string[]): Promise<PfsBatchResponse> {
+    if (codes.length === 0) throw new ValidationError("codes array must not be empty");
+    if (codes.length > 100) throw new ValidationError(`PFS batch lookup supports max 100 codes, got ${codes.length}`);
     return this.http.post<PfsBatchResponse>("/v1/pfs/_batch", { codes });
   }
 

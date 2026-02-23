@@ -1,6 +1,7 @@
 // Copyright 2026 FHIRfly.io LLC. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root.
 import type { HttpClient } from "../http.js";
+import { ValidationError } from "../errors.js";
 import type { ApiResponse } from "../types/common.js";
 import type {
   SnomedConcept,
@@ -89,6 +90,8 @@ export class SnomedEndpoint {
    * ```
    */
   async lookupMany(conceptIds: string[]): Promise<SnomedBatchResponse> {
+    if (conceptIds.length === 0) throw new ValidationError("conceptIds array must not be empty");
+    if (conceptIds.length > 100) throw new ValidationError(`SNOMED batch lookup supports max 100 codes, got ${conceptIds.length}`);
     return this.http.post<SnomedBatchResponse>(
       "/v1/snomed/_batch",
       { codes: conceptIds }

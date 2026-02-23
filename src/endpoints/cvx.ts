@@ -1,6 +1,7 @@
 // Copyright 2026 FHIRfly.io LLC. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root.
 import type { HttpClient } from "../http.js";
+import { ValidationError } from "../errors.js";
 import type {
   ApiResponse,
   BatchResponse,
@@ -45,6 +46,8 @@ export class CvxEndpoint {
     cvxCodes: string[],
     options?: BatchLookupOptions
   ): Promise<BatchResponse<CvxData>> {
+    if (cvxCodes.length === 0) throw new ValidationError("cvxCodes array must not be empty");
+    if (cvxCodes.length > 100) throw new ValidationError(`CVX batch lookup supports max 100 codes, got ${cvxCodes.length}`);
     return this.http.post<BatchResponse<CvxData>>(
       "/v1/cvx/_batch",
       { codes: cvxCodes },

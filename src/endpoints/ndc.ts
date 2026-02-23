@@ -1,6 +1,7 @@
 // Copyright 2026 FHIRfly.io LLC. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root.
 import type { HttpClient } from "../http.js";
+import { ValidationError } from "../errors.js";
 import type {
   ApiResponse,
   BatchResponse,
@@ -27,7 +28,7 @@ export class NdcEndpoint {
    * @example
    * ```ts
    * const ndc = await client.ndc.lookup("0069-0151-01");
-   * console.log(ndc.data.product_name); // "Lipitor"
+   * console.log(ndc.data.brand_name); // "Lipitor"
    * ```
    */
   async lookup(code: string, options?: LookupOptions): Promise<ApiResponse<NdcData>> {
@@ -50,10 +51,10 @@ export class NdcEndpoint {
    * ]);
    *
    * for (const item of results.results) {
-   *   if (item.found) {
-   *     console.log(item.data.product_name);
+   *   if (item.status === "ok") {
+   *     console.log(item.data.brand_name);
    *   } else {
-   *     console.log(`Not found: ${item.code}`);
+   *     console.log(`Not found: ${item.input}`);
    *   }
    * }
    * ```
@@ -62,6 +63,8 @@ export class NdcEndpoint {
     codes: string[],
     options?: BatchLookupOptions
   ): Promise<BatchResponse<NdcData>> {
+    if (codes.length === 0) throw new ValidationError("codes array must not be empty");
+    if (codes.length > 500) throw new ValidationError(`NDC batch lookup supports max 500 codes, got ${codes.length}`);
     return this.http.post<BatchResponse<NdcData>>(
       "/v1/ndc/_batch",
       { codes },
