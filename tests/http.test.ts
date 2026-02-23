@@ -1,3 +1,5 @@
+// Copyright 2026 FHIRfly.io LLC. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root.
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { HttpClient, TokenManager } from "../src/http.js";
 import { AuthenticationError } from "../src/errors.js";

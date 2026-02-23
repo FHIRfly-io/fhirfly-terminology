@@ -1,6 +1,7 @@
 // Copyright 2026 FHIRfly.io LLC. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root.
 import type { HttpClient } from "../http.js";
+import { ValidationError } from "../errors.js";
 import type {
   ApiResponse,
   BatchResponse,
@@ -37,7 +38,7 @@ export class MvxEndpoint {
   /**
    * Look up multiple MVX codes in a single request.
    *
-   * @param mvxCodes - Array of MVX codes (max 500)
+   * @param mvxCodes - Array of MVX codes (max 100)
    * @param options - Response shape, include, and batch options
    * @returns Batch response with results for each code
    */
@@ -45,6 +46,8 @@ export class MvxEndpoint {
     mvxCodes: string[],
     options?: BatchLookupOptions
   ): Promise<BatchResponse<MvxData>> {
+    if (mvxCodes.length === 0) throw new ValidationError("mvxCodes array must not be empty");
+    if (mvxCodes.length > 100) throw new ValidationError(`MVX batch lookup supports max 100 codes, got ${mvxCodes.length}`);
     return this.http.post<BatchResponse<MvxData>>(
       "/v1/mvx/_batch",
       { codes: mvxCodes },

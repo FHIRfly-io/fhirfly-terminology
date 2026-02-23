@@ -1,7 +1,7 @@
 // Copyright 2026 FHIRfly.io LLC. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root.
 /**
- * @fhirfly/sdk - Official FHIRfly SDK for Node.js
+ * @fhirfly-io/terminology - Official FHIRfly Terminology SDK for Node.js
  *
  * Healthcare reference data APIs for clinical coding, drug information, and provider lookup.
  *
@@ -139,4 +139,28 @@ export type {
   ConnectivityTargetData,
   ConnectivityMeta,
   NpiConnectivityData,
+  // Claims
+  NcciClaimType,
+  NcciEditItem,
+  NcciValidateData,
+  NcciValidateResponse,
+  MueServiceType,
+  MueLimitItem,
+  MueLookupData,
+  MueLookupResponse,
+  MueBatchResultItem,
+  MueBatchResponse,
+  PfsRvu,
+  PfsPayment,
+  PfsIndicators,
+  PfsLookupData,
+  PfsLookupResponse,
+  PfsBatchResultItem,
+  PfsBatchResponse,
+  CoveragePolicyType,
+  CoverageCheckItem,
+  CoverageCheckData,
+  CoverageCheckResponse,
+  ClaimsLegalInfo,
+  ClaimsMeta,
 } from "./types/index.js";

@@ -11,19 +11,20 @@ export interface PersonName {
   middle?: string;
   prefix?: string;
   suffix?: string;
-  credential?: string;
+  credential_text?: string;
+  sex?: string;
 }
 
 /**
  * Provider address information.
  */
 export interface NpiAddress {
-  address_1?: string;
-  address_2?: string;
+  line1?: string;
+  line2?: string;
   city?: string;
   state?: string;
-  postal_code?: string;
-  country_code?: string;
+  postal?: string;
+  country?: string;
   phone?: string;
   phone_digits?: string;
   fax?: string;

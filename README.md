@@ -1,6 +1,6 @@
 # @fhirfly-io/terminology
 
-Official FHIRfly SDK for Node.js — typed access to healthcare reference data APIs (NDC, NPI, LOINC, RxNorm, ICD-10, CVX, MVX, FDA Labels).
+Official FHIRfly SDK for Node.js — typed access to healthcare reference data APIs.
 
 [![npm version](https://img.shields.io/npm/v/@fhirfly-io/terminology.svg)](https://www.npmjs.com/package/@fhirfly-io/terminology)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
@@ -20,7 +20,7 @@ const client = new Fhirfly({ apiKey: "your-api-key" });
 
 // Look up a drug by NDC
 const ndc = await client.ndc.lookup("0069-0151-01");
-console.log(ndc.data.product_name); // "Lipitor"
+console.log(ndc.data.brand_name); // "Lipitor"
 
 // Look up a provider by NPI
 const npi = await client.npi.lookup("1234567890");
@@ -30,26 +30,43 @@ console.log(npi.data.name);
 ## Features
 
 - **Full TypeScript support** with comprehensive type definitions
-- **All FHIRfly APIs**: NDC, NPI, RxNorm, LOINC, ICD-10, CVX, MVX, FDA Labels
+- **11 healthcare domains**: NDC, NPI, RxNorm, LOINC, ICD-10, CVX, MVX, FDA Labels, SNOMED CT, Connectivity, Claims
+- **Search** with full-text queries, filters, facets, and pagination
 - **Batch lookups** for efficient bulk operations
 - **Response shapes**: compact, standard, or full detail levels
+- **Two auth modes**: API key (simple) and OAuth2 client credentials (secure)
 - **Automatic retries** with exponential backoff
 - **Detailed error types** for proper error handling
-- **Designed for both human developers and programmatic agents**
+- **Zero runtime dependencies**
 
-## API Reference
+## Authentication
 
-### Client Configuration
+### API Key (Simple)
 
 ```typescript
 const client = new Fhirfly({
-  apiKey: "your-api-key",      // Required
+  apiKey: "ffly_sk_live_...",
   baseUrl: "https://api.fhirfly.io", // Optional, default shown
   timeout: 30000,              // Optional, request timeout in ms
   maxRetries: 3,               // Optional, retry attempts
   retryDelay: 1000,            // Optional, base retry delay in ms
 });
 ```
+
+### OAuth2 Client Credentials (Secure)
+
+```typescript
+const client = new Fhirfly({
+  clientId: "ffly_client_...",
+  clientSecret: "ffly_secret_...",
+  scopes: ["ndc.read", "npi.read"], // Optional
+  tokenUrl: "https://api.fhirfly.io/oauth2/token", // Optional, default shown
+});
+```
+
+OAuth2 tokens are cached and automatically refreshed before expiry.
+
+## API Reference
 
 ### NDC (National Drug Codes)
 
@@ -70,13 +87,20 @@ const results = await client.ndc.lookupMany([
 ]);
 
 for (const item of results.results) {
-  if (item.found) {
-    console.log(item.data.product_name);
+  if (item.status === "ok") {
+    console.log(item.data.brand_name);
   }
 }
+
+// Search
+const results = await client.ndc.search({
+  q: "advil",
+  dosage_form: "TABLET",
+  is_active: true,
+});
 ```
 
-Batch lookups return per-item results and never throw for individual misses.
+Batch lookups return per-item results and never throw for individual misses. Each item has `status: "ok" | "not_found" | "invalid"`.
 
 ### NPI (National Provider Identifiers)
 
@@ -84,8 +108,17 @@ Batch lookups return per-item results and never throw for individual misses.
 // Single lookup
 const npi = await client.npi.lookup("1234567890");
 
-// Batch lookup
+// Batch lookup (up to 100)
 const results = await client.npi.lookupMany(["1234567890", "0987654321"]);
+
+// Search for providers
+const results = await client.npi.search({
+  q: "smith",
+  specialty: "cardiology",
+  state: "CA",
+  entity_type: "individual",
+});
+console.log(`Found ${results.total} providers`);
 ```
 
 ### RxNorm
@@ -94,6 +127,12 @@ const results = await client.npi.lookupMany(["1234567890", "0987654321"]);
 // Look up by RxCUI
 const rx = await client.rxnorm.lookup("213169");
 console.log(rx.data.name); // "atorvastatin 10 MG Oral Tablet"
+
+// Search for drugs
+const results = await client.rxnorm.search({
+  ingredient: "metformin",
+  is_prescribable: true,
+});
 ```
 
 ### LOINC
@@ -101,28 +140,50 @@ console.log(rx.data.name); // "atorvastatin 10 MG Oral Tablet"
 ```typescript
 // Look up lab code
 const loinc = await client.loinc.lookup("2345-7");
-console.log(loinc.data.long_common_name);
+console.log(loinc.data.display_name);
+
+// Search
+const results = await client.loinc.search({
+  q: "glucose",
+  class: "CHEM",
+  system: "Bld",
+});
 ```
 
 ### ICD-10
 
+The API auto-detects CM (diagnoses) vs PCS (procedures) based on code format.
+
 ```typescript
-// ICD-10-CM (diagnoses)
-const diagnosis = await client.icd10.lookupCm("E11.9");
+// Diagnosis code (CM)
+const diagnosis = await client.icd10.lookup("E11.9");
+console.log(diagnosis.data.display); // "Type 2 diabetes mellitus without complications"
 
-// ICD-10-PCS (procedures)
-const procedure = await client.icd10.lookupPcs("0BJ08ZZ");
+// Procedure code (PCS)
+const procedure = await client.icd10.lookup("02HA0QZ");
 
-// Batch lookups
-const cmResults = await client.icd10.lookupCmMany(["E11.9", "I10"]);
-const pcsResults = await client.icd10.lookupPcsMany(["0BJ08ZZ"]);
+// Batch lookup (mix of CM and PCS, up to 100)
+const results = await client.icd10.lookupMany(["E11.9", "I10", "02HA0QZ"]);
+
+// Search
+const results = await client.icd10.search({
+  q: "diabetes",
+  code_system: "CM",
+  billable: true,
+});
 ```
 
 ### CVX (Vaccine Codes)
 
 ```typescript
 const cvx = await client.cvx.lookup("208");
-console.log(cvx.data.short_description);
+console.log(cvx.data.display);
+
+// Search for COVID vaccines
+const results = await client.cvx.search({
+  is_covid_vaccine: true,
+  status: "active",
+});
 ```
 
 ### MVX (Vaccine Manufacturers)
@@ -130,31 +191,147 @@ console.log(cvx.data.short_description);
 ```typescript
 const mvx = await client.mvx.lookup("PFR");
 console.log(mvx.data.manufacturer_name); // "Pfizer, Inc"
+
+const results = await client.mvx.search({ q: "pfizer" });
 ```
 
 ### FDA Labels
 
 ```typescript
-// By Set ID
-const label = await client.fdaLabels.lookup("set-id-here");
+// Look up by Set ID, NDC, or RxCUI (auto-detected)
+const label = await client.fdaLabels.lookup("0069-0151-01");
 
-// By NDC
-const label = await client.fdaLabels.lookupByNdc("0069-0151-01");
+// With safety sections
+const label = await client.fdaLabels.lookup("0069-0151-01", {
+  bundle: "safety",
+});
+
+// With specific sections
+const label = await client.fdaLabels.lookup("0069-0151-01", {
+  sections: ["boxed_warning", "dosage_and_administration"],
+});
+
+// Batch (up to 50, metadata only)
+const results = await client.fdaLabels.lookupMany(["0069-0151-01", "0002-1433-80"]);
+
+// Search
+const results = await client.fdaLabels.search({
+  substance: "acetaminophen",
+  product_type: "otc",
+});
+```
+
+### SNOMED CT (IPS)
+
+Access to ~12,000 curated clinical concepts from the SNOMED CT IPS (International Patient Set), licensed under CC BY 4.0.
+
+```typescript
+// Look up a concept
+const concept = await client.snomed.lookup("73211009");
+console.log(concept.data.preferred_term); // "Diabetes mellitus"
+
+// Batch lookup (up to 100)
+const results = await client.snomed.lookupMany(["73211009", "38341003"]);
+
+// Search by category
+const results = await client.snomed.search({
+  q: "diabetes",
+  ips_category: "condition",
+});
+
+// List all IPS categories
+const categories = await client.snomed.categories();
+
+// Reverse mappings (what ICD-10/RxNorm/NDC codes map to this concept?)
+const mappings = await client.snomed.mappings("73211009");
+```
+
+### Connectivity Intelligence
+
+Discover how to reach a provider's organization electronically — FHIR endpoints, Direct addresses, and more.
+
+```typescript
+// Look up connectivity options for a provider
+const conn = await client.connectivity.lookup("1234567890");
+
+console.log(conn.provider_summary.name);
+
+for (const target of conn.connectivity_targets) {
+  console.log(`${target.name} (${target.type})`);
+  for (const ep of target.endpoints) {
+    console.log(`  ${ep.type}: ${ep.url} [${ep.status}]`);
+  }
+}
+```
+
+### Claims Intelligence
+
+CMS claims editing and payment data. Requires the `claims.read` scope.
+
+```typescript
+// NCCI PTP: Can these codes be billed together?
+const ncci = await client.claims.validateNcci("99213", "99214");
+console.log(ncci.data.can_bill_together); // true/false
+console.log(ncci.data.summary);
+
+// MUE: Maximum units for a code
+const mue = await client.claims.lookupMue("99213");
+for (const limit of mue.data.limits) {
+  console.log(`${limit.service_type}: max ${limit.mue_value} units`);
+}
+
+// Batch MUE (up to 100 codes)
+const mueResults = await client.claims.lookupMueMany(["99213", "99214"]);
+
+// PFS/RVU: Fee schedule and relative value units
+const pfs = await client.claims.lookupPfs("99213");
+console.log(`Work RVU: ${pfs.data.rvu.work}`);
+console.log(`Non-facility payment: $${pfs.data.calculated_payment.non_facility}`);
+
+// Batch PFS (up to 100 codes)
+const pfsResults = await client.claims.lookupPfsMany(["99213", "99214", "99215"]);
+
+// LCD/NCD Coverage determination
+const coverage = await client.claims.checkCoverage("99213");
+console.log(`${coverage.data.policies_found} coverage policies found`);
 ```
 
 ## Response Shapes
 
-All lookup methods accept a `shape` option to control response detail:
+All lookup and search methods accept a `shape` option to control response detail:
 
 | Shape | Description |
 |-------|-------------|
-| `compact` | Minimal fields for quick lookups |
-| `standard` | Balanced detail (default) |
-| `full` | Complete data with all available fields |
+| `compact` | Minimal fields for quick lookups and autocomplete |
+| `standard` | Balanced detail (default for REST) |
+| `full` | Complete data with provenance (default for MCP/agents) |
 
 ```typescript
-// Get full details
 const ndc = await client.ndc.lookup("0069-0151-01", { shape: "full" });
+```
+
+**Exceptions**: SNOMED always returns full data (no shapes). FDA Labels lookup uses a metadata + sections model instead of shapes; search uses shapes.
+
+## Search
+
+All endpoints except Connectivity support full-text search with filters, facets, and pagination:
+
+```typescript
+const results = await client.ndc.search(
+  { q: "advil", is_active: true },        // Search params
+  { shape: "compact", limit: 50, page: 1 } // Options
+);
+
+console.log(`${results.total} results, page ${results.page}`);
+console.log(results.facets); // Facet counts for filtering
+
+for (const item of results.items) {
+  console.log(item.name);
+}
+
+if (results.has_more) {
+  // Fetch next page...
+}
 ```
 
 ## Error Handling

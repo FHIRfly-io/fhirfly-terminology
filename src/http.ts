@@ -145,7 +145,7 @@ export class HttpClient {
       timeout: config.timeout ?? 30000,
       maxRetries: config.maxRetries ?? 3,
       retryDelay: config.retryDelay ?? 1000,
-      userAgent: config.userAgent ?? `@fhirfly/sdk/0.1.0 Node.js/${process.version}`,
+      userAgent: config.userAgent ?? `@fhirfly-io/terminology/0.7.1 Node.js/${process.version}`,
     };
   }
 
@@ -330,7 +330,7 @@ export class HttpClient {
           if (response.status === 429) {
             const retryAfter = response.headers.get("retry-after");
             if (retryAfter && attempt < this.config.maxRetries) {
-              await this.sleep(parseInt(retryAfter, 10) * 1000);
+              await this.sleep(Math.min(parseInt(retryAfter, 10) * 1000, 120_000));
               continue;
             }
             await this.parseErrorResponse(response, endpoint);

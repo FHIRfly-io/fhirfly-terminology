@@ -11,6 +11,7 @@ import { MvxEndpoint } from "./endpoints/mvx.js";
 import { FdaLabelsEndpoint } from "./endpoints/fda-labels.js";
 import { ConnectivityEndpoint } from "./endpoints/connectivity.js";
 import { SnomedEndpoint } from "./endpoints/snomed.js";
+import { ClaimsEndpoint } from "./endpoints/claims.js";
 
 /**
  * Base configuration options shared by all auth modes.
@@ -95,11 +96,12 @@ export type FhirflyConfig = FhirflyApiKeyConfig | FhirflyOAuthConfig;
  *
  * Provides access to healthcare reference data including drug codes (NDC, RxNorm),
  * provider identifiers (NPI), lab codes (LOINC), diagnosis codes (ICD-10),
- * vaccine codes (CVX, MVX), and FDA drug labels.
+ * vaccine codes (CVX, MVX), FDA drug labels, SNOMED CT concepts, connectivity
+ * intelligence, and claims editing/payment data (NCCI, MUE, PFS, Coverage).
  *
  * @example
  * ```ts
- * import { Fhirfly } from "@fhirfly/sdk";
+ * import { Fhirfly } from "@fhirfly-io/terminology";
  *
  * // Option A: API key (simple)
  * const client = new Fhirfly({ apiKey: "ffly_sk_live_..." });
@@ -112,7 +114,7 @@ export type FhirflyConfig = FhirflyApiKeyConfig | FhirflyOAuthConfig;
  *
  * // Look up a drug by NDC
  * const ndc = await client.ndc.lookup("0069-0151-01");
- * console.log(ndc.data.product_name); // "Lipitor"
+ * console.log(ndc.data.brand_name); // "Lipitor"
  * ```
  */
 export class Fhirfly {
@@ -171,6 +173,12 @@ export class Fhirfly {
   readonly snomed: SnomedEndpoint;
 
   /**
+   * Claims Intelligence endpoints (requires `claims.read` scope).
+   * NCCI PTP validation, MUE limits, PFS/RVU fee schedule, LCD/NCD coverage.
+   */
+  readonly claims: ClaimsEndpoint;
+
+  /**
    * Create a new FHIRfly client.
    *
    * @param config - Client configuration (API key or OAuth2 client credentials)
@@ -222,5 +230,6 @@ export class Fhirfly {
     this.fdaLabels = new FdaLabelsEndpoint(this.http);
     this.connectivity = new ConnectivityEndpoint(this.http);
     this.snomed = new SnomedEndpoint(this.http);
+    this.claims = new ClaimsEndpoint(this.http);
   }
 }

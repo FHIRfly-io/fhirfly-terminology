@@ -23,10 +23,7 @@ export interface LookupOptions {
 /**
  * Common options for batch lookup methods.
  */
-export interface BatchLookupOptions extends LookupOptions {
-  /** Maximum codes per batch (default: 100, max: 500) */
-  batchSize?: number;
-}
+export type BatchLookupOptions = LookupOptions;
 
 /**
  * Legal/licensing information included in responses.

@@ -1,6 +1,7 @@
 // Copyright 2026 FHIRfly.io LLC. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root.
 import type { HttpClient } from "../http.js";
+import { ValidationError } from "../errors.js";
 import type {
   ApiResponse,
   BatchResponse,
@@ -37,7 +38,7 @@ export class RxNormEndpoint {
   /**
    * Look up multiple RxCUIs in a single request.
    *
-   * @param rxcuis - Array of RxCUIs (max 500)
+   * @param rxcuis - Array of RxCUIs (max 100)
    * @param options - Response shape, include, and batch options
    * @returns Batch response with results for each RxCUI
    */
@@ -45,6 +46,8 @@ export class RxNormEndpoint {
     rxcuis: string[],
     options?: BatchLookupOptions
   ): Promise<BatchResponse<RxNormData>> {
+    if (rxcuis.length === 0) throw new ValidationError("rxcuis array must not be empty");
+    if (rxcuis.length > 100) throw new ValidationError(`RxNorm batch lookup supports max 100 codes, got ${rxcuis.length}`);
     return this.http.post<BatchResponse<RxNormData>>(
       "/v1/rxnorm/_batch",
       { codes: rxcuis },

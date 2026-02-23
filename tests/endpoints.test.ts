@@ -1,3 +1,5 @@
+// Copyright 2026 FHIRfly.io LLC. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root.
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Fhirfly } from "../src/index.js";
 import {
@@ -822,15 +824,6 @@ describe("Endpoint lookup methods", () => {
       expect(url).not.toContain("?");
     });
 
-    it("passes batchSize option for lookupMany", async () => {
-      mockFetch.mockResolvedValueOnce(batchResponse([]));
-
-      await client.ndc.lookupMany(["123", "456"], { batchSize: 50 });
-
-      // batchSize is a client-side option, not passed to server
-      // This test verifies it doesn't cause errors
-      expect(mockFetch).toHaveBeenCalledOnce();
-    });
   });
 
   // ===========================================================================
@@ -1177,6 +1170,269 @@ describe("Endpoint lookup methods", () => {
   });
 
   // ===========================================================================
+  // SNOMED endpoint
+  // ===========================================================================
+  describe("SNOMED endpoint", () => {
+    describe("lookup", () => {
+      it("makes GET request to correct URL", async () => {
+        mockFetch.mockResolvedValueOnce(
+          apiResponse({
+            concept_id: "73211009",
+            active: true,
+            fsn: "Diabetes mellitus (disorder)",
+            preferred_term: "Diabetes mellitus",
+            synonyms: ["DM"],
+            ips_category: "condition",
+            semantic_tag: "disorder",
+          })
+        );
+
+        await client.snomed.lookup("73211009");
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/snomed/73211009");
+      });
+
+      it("returns SNOMED concept data", async () => {
+        mockFetch.mockResolvedValueOnce(
+          apiResponse({
+            concept_id: "73211009",
+            active: true,
+            fsn: "Diabetes mellitus (disorder)",
+            preferred_term: "Diabetes mellitus",
+            synonyms: ["DM"],
+            ips_category: "condition",
+            semantic_tag: "disorder",
+          })
+        );
+
+        const result = await client.snomed.lookup("73211009");
+
+        expect(result.data.concept_id).toBe("73211009");
+        expect(result.data.preferred_term).toBe("Diabetes mellitus");
+        expect(result.data.ips_category).toBe("condition");
+      });
+    });
+
+    describe("lookupMany", () => {
+      it("makes POST request to batch endpoint", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            count: 1,
+            results: [{ input: "73211009", concept_id: "73211009", status: "ok", data: { concept_id: "73211009", preferred_term: "Diabetes mellitus" } }],
+            meta: { legal: { license: "CC BY 4.0" } },
+          })
+        );
+
+        await client.snomed.lookupMany(["73211009"]);
+
+        const [url, opts] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/snomed/_batch");
+        expect(opts.method).toBe("POST");
+      });
+
+      it("throws ValidationError for empty array", async () => {
+        await expect(client.snomed.lookupMany([])).rejects.toThrow(ValidationError);
+      });
+
+      it("throws ValidationError when exceeding batch limit", async () => {
+        const codes = Array.from({ length: 101 }, (_, i) => String(i));
+        await expect(client.snomed.lookupMany(codes)).rejects.toThrow(ValidationError);
+      });
+    });
+
+    describe("search", () => {
+      it("makes GET request with search params", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            count: 1,
+            results: [{ concept_id: "73211009", preferred_term: "Diabetes mellitus" }],
+            meta: { legal: { license: "CC BY 4.0" } },
+          })
+        );
+
+        await client.snomed.search({ q: "diabetes", ips_category: "condition" });
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/snomed/search");
+        expect(url).toContain("q=diabetes");
+        expect(url).toContain("ips_category=condition");
+      });
+    });
+
+    describe("categories", () => {
+      it("makes GET request to categories endpoint", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            categories: ["condition", "substance", "product"],
+            description: { condition: "Clinical conditions" },
+          })
+        );
+
+        const result = await client.snomed.categories();
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/snomed/categories");
+        expect(result.categories).toContain("condition");
+      });
+    });
+
+    describe("mappings", () => {
+      it("makes GET request to mappings endpoint", async () => {
+        mockFetch.mockResolvedValueOnce(
+          apiResponse({
+            snomed_code: "73211009",
+            snomed_display: "Diabetes mellitus",
+            mappings: [{ source_system: "icd10_cm", source_code: "E11.9", map_type: "equivalent", mapping_source: "snomed-extended-map" }],
+          })
+        );
+
+        const result = await client.snomed.mappings("73211009");
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/snomed/73211009/mappings");
+        expect(result.data.mappings[0]!.source_system).toBe("icd10_cm");
+      });
+    });
+  });
+
+  // ===========================================================================
+  // Claims endpoint
+  // ===========================================================================
+  describe("Claims endpoint", () => {
+    describe("validateNcci", () => {
+      it("makes GET request with code1 and code2", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            data: { code1: "99213", code2: "99214", can_bill_together: true, edits: [], summary: "No edits found" },
+            meta: { source: { name: "CMS NCCI" }, legal: { license: "public_domain" } },
+          })
+        );
+
+        const result = await client.claims.validateNcci("99213", "99214");
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/ncci/validate");
+        expect(url).toContain("code1=99213");
+        expect(url).toContain("code2=99214");
+        expect(result.data.can_bill_together).toBe(true);
+      });
+    });
+
+    describe("lookupMue", () => {
+      it("makes GET request to MUE endpoint", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            data: { hcpcs_code: "99213", limits: [{ hcpcs_code: "99213", service_type: "practitioner", mue_value: 1 }] },
+            meta: { source: { name: "CMS MUE" }, legal: { license: "public_domain" } },
+          })
+        );
+
+        const result = await client.claims.lookupMue("99213");
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/mue/99213");
+        expect(result.data.limits[0]!.mue_value).toBe(1);
+      });
+    });
+
+    describe("lookupMueMany", () => {
+      it("makes POST request to MUE batch endpoint", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            count: 1,
+            results: [{ input: "99213", hcpcs_code: "99213", status: "ok" }],
+            meta: { legal: { license: "public_domain" } },
+          })
+        );
+
+        await client.claims.lookupMueMany(["99213"]);
+
+        const [url, opts] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/mue/_batch");
+        expect(opts.method).toBe("POST");
+      });
+
+      it("throws ValidationError for empty array", async () => {
+        await expect(client.claims.lookupMueMany([])).rejects.toThrow(ValidationError);
+      });
+    });
+
+    describe("lookupPfs", () => {
+      it("makes GET request to PFS endpoint", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            data: {
+              hcpcs_code: "99213",
+              description: "Office visit",
+              status_code: "A",
+              rvu: { work: 1.3, pe_non_facility: 1.2, pe_facility: 0.8, mp: 0.1, total_non_facility: 2.6, total_facility: 2.2 },
+              conversion_factor: 33.89,
+              calculated_payment: { non_facility: 88.11, facility: 74.56 },
+              indicators: { global_days: "XXX", multiple_surgery: null, bilateral_surgery: null },
+            },
+            meta: { source: { name: "CMS PFS" }, legal: { license: "public_domain" } },
+          })
+        );
+
+        const result = await client.claims.lookupPfs("99213");
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/pfs/99213");
+        expect(result.data.rvu.work).toBe(1.3);
+        expect(result.data.calculated_payment.non_facility).toBe(88.11);
+      });
+    });
+
+    describe("checkCoverage", () => {
+      it("makes GET request with hcpcs query param", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            data: {
+              hcpcs_code: "99213",
+              policies_found: 1,
+              policies: [{ policy_type: "lcd", policy_id: "L12345", display_id: "L12345", policy_title: "Test Policy", hcpcs_description: "Office visit", status: "active", is_active: true, effective_date: "2024-01-01" }],
+              summary: "1 policy found",
+            },
+            meta: { source: { name: "CMS LCD" }, legal: { license: "public_domain" } },
+          })
+        );
+
+        const result = await client.claims.checkCoverage("99213");
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/coverage/check");
+        expect(url).toContain("hcpcs=99213");
+        expect(result.data.policies_found).toBe(1);
+      });
+    });
+  });
+
+  // ===========================================================================
+  // Batch validation
+  // ===========================================================================
+  describe("Batch validation", () => {
+    it("NDC rejects empty array", async () => {
+      await expect(client.ndc.lookupMany([])).rejects.toThrow(ValidationError);
+    });
+
+    it("NDC rejects over 500 codes", async () => {
+      const codes = Array.from({ length: 501 }, (_, i) => String(i));
+      await expect(client.ndc.lookupMany(codes)).rejects.toThrow(ValidationError);
+    });
+
+    it("NPI rejects over 100 codes", async () => {
+      const codes = Array.from({ length: 101 }, (_, i) => String(i));
+      await expect(client.npi.lookupMany(codes)).rejects.toThrow(ValidationError);
+    });
+
+    it("FDA Labels rejects over 50 identifiers", async () => {
+      const ids = Array.from({ length: 51 }, (_, i) => String(i));
+      await expect(client.fdaLabels.lookupMany(ids)).rejects.toThrow(ValidationError);
+    });
+  });
+
+  // ===========================================================================
   // Request Headers
   // ===========================================================================
   describe("Request headers", () => {
@@ -1204,7 +1460,7 @@ describe("Endpoint lookup methods", () => {
       await client.ndc.lookup("123");
 
       const [, opts] = mockFetch.mock.calls[0]!;
-      expect(opts.headers["User-Agent"]).toContain("@fhirfly/sdk");
+      expect(opts.headers["User-Agent"]).toContain("@fhirfly-io/terminology");
     });
   });
 });

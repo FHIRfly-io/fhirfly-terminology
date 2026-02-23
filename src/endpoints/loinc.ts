@@ -1,6 +1,7 @@
 // Copyright 2026 FHIRfly.io LLC. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root.
 import type { HttpClient } from "../http.js";
+import { ValidationError } from "../errors.js";
 import type {
   ApiResponse,
   BatchResponse,
@@ -37,7 +38,7 @@ export class LoincEndpoint {
   /**
    * Look up multiple LOINC codes in a single request.
    *
-   * @param loincNums - Array of LOINC numbers (max 500)
+   * @param loincNums - Array of LOINC numbers (max 100)
    * @param options - Response shape, include, and batch options
    * @returns Batch response with results for each LOINC
    */
@@ -45,6 +46,8 @@ export class LoincEndpoint {
     loincNums: string[],
     options?: BatchLookupOptions
   ): Promise<BatchResponse<LoincData>> {
+    if (loincNums.length === 0) throw new ValidationError("loincNums array must not be empty");
+    if (loincNums.length > 100) throw new ValidationError(`LOINC batch lookup supports max 100 codes, got ${loincNums.length}`);
     return this.http.post<BatchResponse<LoincData>>(
       "/v1/loinc/_batch",
       { codes: loincNums },

@@ -1,6 +1,7 @@
 // Copyright 2026 FHIRfly.io LLC. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root.
 import type { HttpClient } from "../http.js";
+import { ValidationError } from "../errors.js";
 import type {
   ApiResponse,
   BatchResponse,
@@ -37,7 +38,7 @@ export class NpiEndpoint {
   /**
    * Look up multiple NPIs in a single request.
    *
-   * @param npis - Array of 10-digit NPI numbers (max 500)
+   * @param npis - Array of 10-digit NPI numbers (max 100)
    * @param options - Response shape, include, and batch options
    * @returns Batch response with results for each NPI
    *
@@ -53,6 +54,8 @@ export class NpiEndpoint {
     npis: string[],
     options?: BatchLookupOptions
   ): Promise<BatchResponse<NpiData>> {
+    if (npis.length === 0) throw new ValidationError("npis array must not be empty");
+    if (npis.length > 100) throw new ValidationError(`NPI batch lookup supports max 100 codes, got ${npis.length}`);
     return this.http.post<BatchResponse<NpiData>>(
       "/v1/npi/_batch",
       { codes: npis },
