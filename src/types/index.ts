@@ -141,3 +141,30 @@ export type {
   ConnectivityMeta,
   NpiConnectivityData,
 } from "./connectivity.js";
+
+// Claims types
+export type {
+  NcciClaimType,
+  NcciEditItem,
+  NcciValidateData,
+  NcciValidateResponse,
+  MueServiceType,
+  MueLimitItem,
+  MueLookupData,
+  MueLookupResponse,
+  MueBatchResultItem,
+  MueBatchResponse,
+  PfsRvu,
+  PfsPayment,
+  PfsIndicators,
+  PfsLookupData,
+  PfsLookupResponse,
+  PfsBatchResultItem,
+  PfsBatchResponse,
+  CoveragePolicyType,
+  CoverageCheckItem,
+  CoverageCheckData,
+  CoverageCheckResponse,
+  ClaimsLegalInfo,
+  ClaimsMeta,
+} from "./claims.js";

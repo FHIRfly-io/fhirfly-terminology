@@ -30,7 +30,7 @@ console.log(npi.data.name);
 ## Features
 
 - **Full TypeScript support** with comprehensive type definitions
-- **10 healthcare APIs**: NDC, NPI, RxNorm, LOINC, ICD-10, CVX, MVX, FDA Labels, SNOMED CT, Connectivity
+- **11 healthcare domains**: NDC, NPI, RxNorm, LOINC, ICD-10, CVX, MVX, FDA Labels, SNOMED CT, Connectivity, Claims
 - **Search** with full-text queries, filters, facets, and pagination
 - **Batch lookups** for efficient bulk operations
 - **Response shapes**: compact, standard, or full detail levels
@@ -262,6 +262,38 @@ for (const target of conn.connectivity_targets) {
     console.log(`  ${ep.type}: ${ep.url} [${ep.status}]`);
   }
 }
+```
+
+### Claims Intelligence
+
+CMS claims editing and payment data. Requires the `claims.read` scope.
+
+```typescript
+// NCCI PTP: Can these codes be billed together?
+const ncci = await client.claims.validateNcci("99213", "99214");
+console.log(ncci.data.can_bill_together); // true/false
+console.log(ncci.data.summary);
+
+// MUE: Maximum units for a code
+const mue = await client.claims.lookupMue("99213");
+for (const limit of mue.data.limits) {
+  console.log(`${limit.service_type}: max ${limit.mue_value} units`);
+}
+
+// Batch MUE (up to 100 codes)
+const mueResults = await client.claims.lookupMueMany(["99213", "99214"]);
+
+// PFS/RVU: Fee schedule and relative value units
+const pfs = await client.claims.lookupPfs("99213");
+console.log(`Work RVU: ${pfs.data.rvu.work}`);
+console.log(`Non-facility payment: $${pfs.data.calculated_payment.non_facility}`);
+
+// Batch PFS (up to 100 codes)
+const pfsResults = await client.claims.lookupPfsMany(["99213", "99214", "99215"]);
+
+// LCD/NCD Coverage determination
+const coverage = await client.claims.checkCoverage("99213");
+console.log(`${coverage.data.policies_found} coverage policies found`);
 ```
 
 ## Response Shapes
