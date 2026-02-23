@@ -822,15 +822,6 @@ describe("Endpoint lookup methods", () => {
       expect(url).not.toContain("?");
     });
 
-    it("passes batchSize option for lookupMany", async () => {
-      mockFetch.mockResolvedValueOnce(batchResponse([]));
-
-      await client.ndc.lookupMany(["123", "456"], { batchSize: 50 });
-
-      // batchSize is a client-side option, not passed to server
-      // This test verifies it doesn't cause errors
-      expect(mockFetch).toHaveBeenCalledOnce();
-    });
   });
 
   // ===========================================================================

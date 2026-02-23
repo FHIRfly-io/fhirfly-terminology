@@ -330,7 +330,7 @@ export class HttpClient {
           if (response.status === 429) {
             const retryAfter = response.headers.get("retry-after");
             if (retryAfter && attempt < this.config.maxRetries) {
-              await this.sleep(parseInt(retryAfter, 10) * 1000);
+              await this.sleep(Math.min(parseInt(retryAfter, 10) * 1000, 120_000));
               continue;
             }
             await this.parseErrorResponse(response, endpoint);
