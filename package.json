@@ -8,10 +8,10 @@
   "homepage": "https://fhirfly.io",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FHIRfly-io/fhirfly-terminology.git"
+    "url": "git+https://gitlab.com/fhirfly-io/fhirfly-terminology.git"
   },
   "bugs": {
-    "url": "https://github.com/FHIRfly-io/fhirfly-terminology/issues"
+    "url": "https://gitlab.com/fhirfly-io/fhirfly-terminology/-/issues"
   },
   "keywords": [
     "fhirfly",
