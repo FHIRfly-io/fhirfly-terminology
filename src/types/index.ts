@@ -171,6 +171,7 @@ export type {
 
 // SMA types
 export type {
+  SmaListOptions,
   SmaStateSummary,
   SmaMetaResponse,
   SmaStatesListResponse,

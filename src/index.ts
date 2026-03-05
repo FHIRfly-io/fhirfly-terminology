@@ -164,6 +164,7 @@ export type {
   ClaimsLegalInfo,
   ClaimsMeta,
   // SMA
+  SmaListOptions,
   SmaStateSummary,
   SmaMetaResponse,
   SmaStatesListResponse,

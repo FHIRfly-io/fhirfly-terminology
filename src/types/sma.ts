@@ -8,6 +8,20 @@
  */
 
 /**
+ * Options for filtering the SMA states list.
+ */
+export interface SmaListOptions {
+  /** Filter by implementation status */
+  implemented?: boolean;
+  /** Filter by API vendor (e.g., "Epic") */
+  vendor?: string;
+  /** Filter by patient access status */
+  status?: string;
+  /** Filter by FHIR version (e.g., "4.0.1") */
+  fhir_version?: string;
+}
+
+/**
  * Summary of a state's SMA endpoint implementation status.
  */
 export interface SmaStateSummary {
@@ -27,7 +41,7 @@ export interface SmaStateSummary {
   provider_directory_status: string | null;
   /** Number of production endpoint URLs */
   production_url_count: number;
-  /** FHIR version (e.g., "R4") */
+  /** FHIR version (e.g., "4.0.1") */
   fhir_version: string | null;
 }
 

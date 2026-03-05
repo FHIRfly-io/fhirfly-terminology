@@ -2,24 +2,11 @@
 // Licensed under the MIT License. See LICENSE file in the project root.
 import type { HttpClient } from "../http.js";
 import type {
+  SmaListOptions,
   SmaStatesListResponse,
   SmaStateDetailResponse,
   SmaStatsResponse,
 } from "../types/sma.js";
-
-/**
- * Options for filtering the SMA states list.
- */
-export interface SmaListOptions {
-  /** Filter by implementation status */
-  implemented?: boolean;
-  /** Filter by API vendor (e.g., "Epic") */
-  vendor?: string;
-  /** Filter by patient access status */
-  status?: string;
-  /** Filter by FHIR version (e.g., "R4") */
-  fhir_version?: string;
-}
 
 /**
  * SMA (State Medicaid Agency) Endpoint Directory API endpoints.
