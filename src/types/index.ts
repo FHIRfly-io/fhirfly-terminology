@@ -168,3 +168,12 @@ export type {
   ClaimsLegalInfo,
   ClaimsMeta,
 } from "./claims.js";
+
+// SMA types
+export type {
+  SmaStateSummary,
+  SmaMetaResponse,
+  SmaStatesListResponse,
+  SmaStateDetailResponse,
+  SmaStatsResponse,
+} from "./sma.js";

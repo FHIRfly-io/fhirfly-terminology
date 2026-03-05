@@ -12,6 +12,7 @@ import { FdaLabelsEndpoint } from "./endpoints/fda-labels.js";
 import { ConnectivityEndpoint } from "./endpoints/connectivity.js";
 import { SnomedEndpoint } from "./endpoints/snomed.js";
 import { ClaimsEndpoint } from "./endpoints/claims.js";
+import { SmaEndpoint } from "./endpoints/sma.js";
 
 /**
  * Base configuration options shared by all auth modes.
@@ -179,6 +180,12 @@ export class Fhirfly {
   readonly claims: ClaimsEndpoint;
 
   /**
+   * SMA (State Medicaid Agency) Endpoint Directory (requires `connectivity.read` scope).
+   * State FHIR endpoint implementation status, patient access, and provider directories.
+   */
+  readonly sma: SmaEndpoint;
+
+  /**
    * Create a new FHIRfly client.
    *
    * @param config - Client configuration (API key or OAuth2 client credentials)
@@ -231,5 +238,6 @@ export class Fhirfly {
     this.connectivity = new ConnectivityEndpoint(this.http);
     this.snomed = new SnomedEndpoint(this.http);
     this.claims = new ClaimsEndpoint(this.http);
+    this.sma = new SmaEndpoint(this.http);
   }
 }

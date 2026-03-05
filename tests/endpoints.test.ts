@@ -1409,6 +1409,183 @@ describe("Endpoint lookup methods", () => {
   });
 
   // ===========================================================================
+  // SMA endpoint
+  // ===========================================================================
+  describe("SMA endpoint", () => {
+    describe("listStates", () => {
+      it("makes GET request to /v1/sma/states", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            states: [
+              {
+                id: "california",
+                state: "California",
+                abbreviation: "CA",
+                is_implemented: true,
+                api_vendor: "Epic",
+                patient_access_status: "In Production",
+                provider_directory_status: "In Production",
+                production_url_count: 3,
+                fhir_version: "R4",
+              },
+            ],
+            total: 1,
+            meta: { data_as_of: "2026-03-01T00:00:00Z", source: "CMS SMA Endpoint Directory", source_url: "https://github.com/CMSgov/SMA-Endpoint-Directory" },
+          })
+        );
+
+        const result = await client.sma.listStates();
+
+        const [url, opts] = mockFetch.mock.calls[0]!;
+        expect(url).toBe("https://api.fhirfly.io/v1/sma/states");
+        expect(opts.method).toBe("GET");
+        expect(result.states).toHaveLength(1);
+        expect(result.states[0]!.state).toBe("California");
+        expect(result.total).toBe(1);
+      });
+
+      it("passes filter query params", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            states: [],
+            total: 0,
+            meta: { data_as_of: "2026-03-01T00:00:00Z", source: "CMS SMA Endpoint Directory", source_url: "https://github.com/CMSgov/SMA-Endpoint-Directory" },
+          })
+        );
+
+        await client.sma.listStates({ implemented: true, vendor: "Epic", status: "In Production", fhir_version: "R4" });
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("implemented=true");
+        expect(url).toContain("vendor=Epic");
+        expect(url).toContain("status=In+Production");
+        expect(url).toContain("fhir_version=R4");
+      });
+    });
+
+    describe("getState", () => {
+      it("makes GET request with state param", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            id: "california",
+            state: "California",
+            abbreviation: "CA",
+            api_vendor: "Epic",
+            survey_date: "2026-01-15",
+            is_implemented: true,
+            patient_access: {
+              status: "In Production",
+              implementation_date: "2024-07-01",
+              fhir_version: "R4",
+              auth_protocol: "OAuth 2.0",
+              refresh_frequency: "Daily",
+              endpoints: {
+                claims: ["https://fhir.ca.gov/claims"],
+                pdex: [],
+                formulary: [],
+                chip: [],
+                capability_statement: ["https://fhir.ca.gov/metadata"],
+                sandbox: [],
+              },
+            },
+            provider_directory: {
+              status: "In Production",
+              implementation_date: "2024-07-01",
+              fhir_version: "R4",
+              is_public: true,
+              refresh_frequency: "Weekly",
+              endpoints: {
+                production: ["https://fhir.ca.gov/pd"],
+                capability_statement: [],
+                sandbox: [],
+              },
+            },
+            contacts: {
+              member_phone: "1-800-555-0100",
+              member_email: null,
+              developer_contact: "dev@ca.gov",
+              pd_developer_contact: null,
+              registration_info: null,
+              pd_registration_info: null,
+            },
+            all_production_urls: ["https://fhir.ca.gov/claims", "https://fhir.ca.gov/pd"],
+            meta: {
+              data_as_of: "2026-03-01T00:00:00Z",
+              source: "CMS SMA Endpoint Directory",
+              source_url: "https://github.com/CMSgov/SMA-Endpoint-Directory",
+              ingested_at: "2026-03-01T00:00:00Z",
+            },
+          })
+        );
+
+        const result = await client.sma.getState("CA");
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/sma/states/CA");
+        expect(result.state).toBe("California");
+        expect(result.is_implemented).toBe(true);
+        expect(result.patient_access.endpoints.claims).toHaveLength(1);
+      });
+
+      it("encodes special characters in state param", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            id: "new_york",
+            state: "New York",
+            abbreviation: "NY",
+            api_vendor: null,
+            survey_date: null,
+            is_implemented: false,
+            patient_access: { status: null, implementation_date: null, fhir_version: null, auth_protocol: null, refresh_frequency: null, endpoints: { claims: [], pdex: [], formulary: [], chip: [], capability_statement: [], sandbox: [] } },
+            provider_directory: { status: null, implementation_date: null, fhir_version: null, is_public: null, refresh_frequency: null, endpoints: { production: [], capability_statement: [], sandbox: [] } },
+            contacts: { member_phone: null, member_email: null, developer_contact: null, pd_developer_contact: null, registration_info: null, pd_registration_info: null },
+            all_production_urls: [],
+            meta: { data_as_of: "2026-03-01T00:00:00Z", source: "CMS SMA Endpoint Directory", source_url: "https://github.com/CMSgov/SMA-Endpoint-Directory", ingested_at: "2026-03-01T00:00:00Z" },
+          })
+        );
+
+        await client.sma.getState("New York");
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("New%20York");
+      });
+
+      it("throws NotFoundError for 404 response", async () => {
+        mockFetch.mockResolvedValueOnce(
+          errorResponse(404, { error: "state_not_found", message: "State not found" })
+        );
+
+        await expect(client.sma.getState("XX")).rejects.toThrow(NotFoundError);
+      });
+    });
+
+    describe("stats", () => {
+      it("makes GET request to /v1/sma/stats", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            summary: { total_states: 56, implemented: 40, not_implemented: 16, total_production_urls: 200 },
+            by_vendor: { Epic: 20, Cerner: 10, Other: 10 },
+            by_patient_access_status: { "In Production": 35, "In Development": 5 },
+            by_fhir_version: { R4: 38, STU3: 2 },
+            by_auth_protocol: { "OAuth 2.0": 30, "API Key": 10 },
+            provider_directory: { total_with_pd: 30, by_status: { "In Production": 25, "In Development": 5 } },
+            meta: { data_as_of: "2026-03-01T00:00:00Z", source: "CMS SMA Endpoint Directory", source_url: "https://github.com/CMSgov/SMA-Endpoint-Directory" },
+          })
+        );
+
+        const result = await client.sma.stats();
+
+        const [url, opts] = mockFetch.mock.calls[0]!;
+        expect(url).toBe("https://api.fhirfly.io/v1/sma/stats");
+        expect(opts.method).toBe("GET");
+        expect(result.summary.total_states).toBe(56);
+        expect(result.summary.implemented).toBe(40);
+        expect(result.by_vendor).toHaveProperty("Epic");
+      });
+    });
+  });
+
+  // ===========================================================================
   // Batch validation
   // ===========================================================================
   describe("Batch validation", () => {

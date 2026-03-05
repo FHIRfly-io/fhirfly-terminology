@@ -163,4 +163,10 @@ export type {
   CoverageCheckResponse,
   ClaimsLegalInfo,
   ClaimsMeta,
+  // SMA
+  SmaStateSummary,
+  SmaMetaResponse,
+  SmaStatesListResponse,
+  SmaStateDetailResponse,
+  SmaStatsResponse,
 } from "./types/index.js";
