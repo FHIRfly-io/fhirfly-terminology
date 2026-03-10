@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.10.1] - 2026-03-10
+
+### Added
+- `SourceInfo` interface for data provenance (name, url, version, fhirfly_updated_at, components)
+- Optional `source` field on `BatchResponse.meta` (included when shape=full)
+
 ## [0.8.1] - 2026-03-02
 
 ### Changed
