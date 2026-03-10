@@ -35,6 +35,25 @@ export interface LegalInfo {
 }
 
 /**
+ * Provenance information included in full-shape responses.
+ * Describes the upstream data source, version, and when FHIRfly last ingested it.
+ */
+export interface SourceInfo {
+  /** Name of the data source (e.g., "FDA NDC Directory", "CMS NPPES") */
+  name: string;
+  /** URL of the authoritative source */
+  url?: string;
+  /** Version or release identifier of the source data */
+  version?: string;
+  /** ISO 8601 timestamp of when FHIRfly last ingested this data */
+  fhirfly_updated_at?: string;
+  /** Version of the FHIRfly ETL pipeline that processed this data */
+  fhirfly_etl_version?: string;
+  /** Component data sources (used when a dataset combines multiple sources, e.g., NPI = NPPES + NUCC) */
+  components?: Array<{ name: string; version: string; url?: string }>;
+}
+
+/**
  * Metadata included in all API responses.
  */
 export interface ResponseMeta {
@@ -76,6 +95,8 @@ export interface BatchResponse<T> {
   /** Response metadata */
   meta: {
     legal: LegalInfo;
+    /** Provenance information. Included when shape=full. */
+    source?: SourceInfo;
   };
 }
 
