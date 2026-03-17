@@ -13,6 +13,8 @@ import { ConnectivityEndpoint } from "./endpoints/connectivity.js";
 import { SnomedEndpoint } from "./endpoints/snomed.js";
 import { ClaimsEndpoint } from "./endpoints/claims.js";
 import { SmaEndpoint } from "./endpoints/sma.js";
+import { HccEndpoint } from "./endpoints/hcc.js";
+import { Opcs4Endpoint } from "./endpoints/opcs4.js";
 
 /**
  * Base configuration options shared by all auth modes.
@@ -186,6 +188,18 @@ export class Fhirfly {
   readonly sma: SmaEndpoint;
 
   /**
+   * HCC (Hierarchical Condition Categories) crosswalk lookups.
+   * Map ICD-10 diagnosis codes to CMS risk adjustment categories.
+   */
+  readonly hcc: HccEndpoint;
+
+  /**
+   * OPCS-4 (Office of Population Censuses and Surveys) procedure code lookups.
+   * UK NHS procedural coding system.
+   */
+  readonly opcs4: Opcs4Endpoint;
+
+  /**
    * Create a new FHIRfly client.
    *
    * @param config - Client configuration (API key or OAuth2 client credentials)
@@ -239,5 +253,7 @@ export class Fhirfly {
     this.snomed = new SnomedEndpoint(this.http);
     this.claims = new ClaimsEndpoint(this.http);
     this.sma = new SmaEndpoint(this.http);
+    this.hcc = new HccEndpoint(this.http);
+    this.opcs4 = new Opcs4Endpoint(this.http);
   }
 }

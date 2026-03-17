@@ -34,12 +34,14 @@ export interface Icd10Standard extends Icd10Compact {
   root_operation?: string;
   /** SNOMED CT mappings (ICD-10-CM only, added by enrichment) */
   snomed?: SnomedEnrichmentStandard[];
+  /** HCC crosswalk mappings (ICD-10-CM only, added by enrichment) */
+  hcc?: Array<{ cc_number: number; model_version: string; model_type: string }>;
 }
 
 /**
  * ICD-10 lookup result - full shape.
  */
-export interface Icd10Full extends Omit<Icd10Standard, "snomed"> {
+export interface Icd10Full extends Omit<Icd10Standard, "snomed" | "hcc"> {
   /** ICD-10-CM specific */
   includes?: string[];
   excludes1?: string[];
@@ -55,6 +57,8 @@ export interface Icd10Full extends Omit<Icd10Standard, "snomed"> {
   end_date?: string;
   /** SNOMED CT mappings with FHIR coding (ICD-10-CM only, added by enrichment) */
   snomed?: SnomedEnrichmentFull[];
+  /** HCC crosswalk mappings with payment details (ICD-10-CM only, added by enrichment) */
+  hcc?: Array<{ cc_number: number; model_version: string; model_type: string; payment_year: string; release_type: string }>;
 }
 
 /**

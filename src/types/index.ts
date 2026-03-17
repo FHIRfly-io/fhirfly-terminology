@@ -178,3 +178,28 @@ export type {
   SmaStateDetailResponse,
   SmaStatsResponse,
 } from "./sma.js";
+
+// HCC types
+export type {
+  HccFhirCoding,
+  HccIngest,
+  HccCompact,
+  HccStandard,
+  HccFull,
+  HccData,
+  HccReverseResult,
+  HccSearchParams,
+} from "./hcc.js";
+
+// OPCS-4 types
+export type {
+  Opcs4FhirCoding,
+  Opcs4Structure,
+  Opcs4Legal,
+  Opcs4Ingest,
+  Opcs4Compact,
+  Opcs4Standard,
+  Opcs4Full,
+  Opcs4Data,
+  Opcs4SearchParams,
+} from "./opcs4.js";

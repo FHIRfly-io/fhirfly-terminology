@@ -170,4 +170,27 @@ export type {
   SmaStatesListResponse,
   SmaStateDetailResponse,
   SmaStatsResponse,
+  // HCC
+  HccFhirCoding,
+  HccIngest,
+  HccCompact,
+  HccStandard,
+  HccFull,
+  HccData,
+  HccReverseResult,
+  HccSearchParams,
+  // OPCS-4
+  Opcs4FhirCoding,
+  Opcs4Structure,
+  Opcs4Legal,
+  Opcs4Ingest,
+  Opcs4Compact,
+  Opcs4Standard,
+  Opcs4Full,
+  Opcs4Data,
+  Opcs4SearchParams,
 } from "./types/index.js";
+
+// Endpoint classes
+export { HccEndpoint, type HccReverseLookupOptions } from "./endpoints/hcc.js";
+export { Opcs4Endpoint } from "./endpoints/opcs4.js";
