@@ -6,6 +6,15 @@ import type { SnomedEnrichmentStandard, SnomedEnrichmentFull } from "./snomed.js
 /**
  * RxNorm term type (TTY).
  */
+/**
+ * FHIR coding representation for RxNorm.
+ */
+export interface RxNormFhirCoding {
+  system: "http://www.nlm.nih.gov/research/umls/rxnorm";
+  code: string;
+  display: string;
+}
+
 export type RxTermType =
   | "IN"    // Ingredient
   | "PIN"   // Precise Ingredient
@@ -49,6 +58,8 @@ export interface RxNormStandard extends RxNormCompact {
     rxcui: string;
     name: string;
   }>;
+  /** FHIR coding for this RxNorm concept */
+  fhir_coding?: RxNormFhirCoding;
   /** SNOMED CT mappings (added by enrichment) */
   snomed?: SnomedEnrichmentStandard[];
 }

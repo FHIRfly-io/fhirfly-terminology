@@ -15,6 +15,7 @@ import { ClaimsEndpoint } from "./endpoints/claims.js";
 import { SmaEndpoint } from "./endpoints/sma.js";
 import { HccEndpoint } from "./endpoints/hcc.js";
 import { Opcs4Endpoint } from "./endpoints/opcs4.js";
+import { DmdEndpoint } from "./endpoints/dmd.js";
 
 /**
  * Base configuration options shared by all auth modes.
@@ -200,6 +201,12 @@ export class Fhirfly {
   readonly opcs4: Opcs4Endpoint;
 
   /**
+   * dm+d (Dictionary of Medicines and Devices) lookups.
+   * UK NHS medicines reference data standard covering VTM/VMP/AMP/VMPP/AMPP.
+   */
+  readonly dmd: DmdEndpoint;
+
+  /**
    * Create a new FHIRfly client.
    *
    * @param config - Client configuration (API key or OAuth2 client credentials)
@@ -255,5 +262,6 @@ export class Fhirfly {
     this.sma = new SmaEndpoint(this.http);
     this.hcc = new HccEndpoint(this.http);
     this.opcs4 = new Opcs4Endpoint(this.http);
+    this.dmd = new DmdEndpoint(this.http);
   }
 }

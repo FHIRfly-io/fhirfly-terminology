@@ -13,6 +13,15 @@ export interface ActiveIngredient {
 }
 
 /**
+ * FHIR coding representation for NDC.
+ */
+export interface NdcFhirCoding {
+  system: "http://hl7.org/fhir/sid/ndc";
+  code: string;
+  display: string;
+}
+
+/**
  * NDC type: product-level or package-level.
  */
 export type NdcType = "package" | "product";
@@ -51,6 +60,8 @@ export interface NdcStandard extends DisplayField {
   strength: string | null;
   rxcui: string[];
   is_active: boolean;
+  /** FHIR coding for this NDC */
+  fhir_coding?: NdcFhirCoding;
   /** SNOMED CT mappings (derived via RxNorm, added by enrichment) */
   snomed?: SnomedEnrichmentStandard[];
 }
@@ -76,6 +87,8 @@ export interface NdcFull extends DisplayField {
   strength: string | null;
   rxcui: string[];
   is_active: boolean;
+  /** FHIR coding for this NDC */
+  fhir_coding?: NdcFhirCoding;
   marketing_category: string | null;
   application_number: string | null;
   product_type: string | null;

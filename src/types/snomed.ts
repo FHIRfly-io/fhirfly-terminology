@@ -33,6 +33,12 @@ export interface SnomedConcept {
   synonyms: string[] | null;
   ips_category: IpsCategory | null;
   semantic_tag: string | null;
+  /** FHIR coding for this SNOMED concept */
+  fhir_coding?: {
+    system: string;
+    code: string;
+    display?: string;
+  };
 }
 
 /**

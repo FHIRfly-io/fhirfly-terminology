@@ -47,6 +47,7 @@ export type {
   SearchLegalInfo,
   SearchResponse,
   // NDC
+  NdcFhirCoding,
   ActiveIngredient,
   NdcType,
   NdcCompact,
@@ -68,6 +69,7 @@ export type {
   NpiData,
   NpiSearchParams,
   // RxNorm
+  RxNormFhirCoding,
   RxTermType,
   RxNormCompact,
   RxNormStandard,
@@ -86,6 +88,7 @@ export type {
   LoincData,
   LoincSearchParams,
   // ICD-10
+  Icd10FhirCoding,
   Icd10Type,
   Icd10Compact,
   Icd10Standard,
@@ -189,8 +192,21 @@ export type {
   Opcs4Full,
   Opcs4Data,
   Opcs4SearchParams,
+  // dm+d
+  DmdConceptType,
+  DmdFhirCoding,
+  DmdLegal,
+  DmdIngest,
+  DmdLookupValue,
+  DmdIngredient,
+  DmdCompact,
+  DmdStandard,
+  DmdFull,
+  DmdData,
+  DmdSearchParams,
 } from "./types/index.js";
 
 // Endpoint classes
 export { HccEndpoint, type HccReverseLookupOptions } from "./endpoints/hcc.js";
 export { Opcs4Endpoint } from "./endpoints/opcs4.js";
+export { DmdEndpoint } from "./endpoints/dmd.js";

@@ -21,6 +21,7 @@ export type {
 
 // NDC types
 export type {
+  NdcFhirCoding,
   ActiveIngredient,
   NdcType,
   NdcCompact,
@@ -48,6 +49,7 @@ export type {
 
 // RxNorm types
 export type {
+  RxNormFhirCoding,
   RxTermType,
   RxNormCompact,
   RxNormStandard,
@@ -72,6 +74,7 @@ export type {
 
 // ICD-10 types
 export type {
+  Icd10FhirCoding,
   Icd10Type,
   Icd10Compact,
   Icd10Standard,
@@ -203,3 +206,18 @@ export type {
   Opcs4Data,
   Opcs4SearchParams,
 } from "./opcs4.js";
+
+// dm+d types
+export type {
+  DmdConceptType,
+  DmdFhirCoding,
+  DmdLegal,
+  DmdIngest,
+  DmdLookupValue,
+  DmdIngredient,
+  DmdCompact,
+  DmdStandard,
+  DmdFull,
+  DmdData,
+  DmdSearchParams,
+} from "./dmd.js";

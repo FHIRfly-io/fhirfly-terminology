@@ -4,6 +4,15 @@ import type { DisplayField } from "./common.js";
 import type { SnomedEnrichmentStandard, SnomedEnrichmentFull } from "./snomed.js";
 
 /**
+ * FHIR coding representation for ICD-10.
+ */
+export interface Icd10FhirCoding {
+  system: string;
+  code: string;
+  display: string;
+}
+
+/**
  * ICD-10 code type.
  */
 export type Icd10Type = "cm" | "pcs";
@@ -32,6 +41,8 @@ export interface Icd10Standard extends Icd10Compact {
   /** ICD-10-PCS specific */
   body_system?: string;
   root_operation?: string;
+  /** FHIR coding for this ICD-10 code */
+  fhir_coding?: Icd10FhirCoding;
   /** SNOMED CT mappings (ICD-10-CM only, added by enrichment) */
   snomed?: SnomedEnrichmentStandard[];
   /** HCC crosswalk mappings (ICD-10-CM only, added by enrichment) */
