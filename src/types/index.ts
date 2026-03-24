@@ -49,6 +49,8 @@ export type {
 
 // RxNorm types
 export type {
+  DrugClassEntry,
+  Contraindication,
   RxNormFhirCoding,
   RxTermType,
   RxNormCompact,
@@ -85,6 +87,7 @@ export type {
 
 // CVX types
 export type {
+  CvxNdcCrosswalk,
   CvxCompact,
   CvxStandard,
   CvxFull,
@@ -221,3 +224,28 @@ export type {
   DmdData,
   DmdSearchParams,
 } from "./dmd.js";
+
+// UCUM types
+export type {
+  UcumFhirCoding,
+  UcumCompact,
+  UcumStandard,
+  UcumFull,
+  UcumData,
+  UcumSearchParams,
+  UcumValidateComponent,
+  UcumValidateResult,
+  UcumConvertResult,
+} from "./ucum.js";
+
+// RxClass types
+export type {
+  RxClassFhirCoding,
+  RxClassCompact,
+  RxClassStandard,
+  RxClassFull,
+  RxClassData,
+  RxClassSearchParams,
+  RxClassMember,
+  RxClassMembersResponse,
+} from "./rxclass.js";

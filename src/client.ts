@@ -16,6 +16,8 @@ import { SmaEndpoint } from "./endpoints/sma.js";
 import { HccEndpoint } from "./endpoints/hcc.js";
 import { Opcs4Endpoint } from "./endpoints/opcs4.js";
 import { DmdEndpoint } from "./endpoints/dmd.js";
+import { UcumEndpoint } from "./endpoints/ucum.js";
+import { RxClassEndpoint } from "./endpoints/rxclass.js";
 
 /**
  * Base configuration options shared by all auth modes.
@@ -207,6 +209,18 @@ export class Fhirfly {
   readonly dmd: DmdEndpoint;
 
   /**
+   * UCUM (Unified Code for Units of Measure) lookups.
+   * Standardized units of measure for healthcare and science, with validation and conversion.
+   */
+  readonly ucum: UcumEndpoint;
+
+  /**
+   * RxClass drug classification hierarchy lookups.
+   * ATC, EPC, MOA, PE, and CHEM drug class types with member drug listings.
+   */
+  readonly rxclass: RxClassEndpoint;
+
+  /**
    * Create a new FHIRfly client.
    *
    * @param config - Client configuration (API key or OAuth2 client credentials)
@@ -263,5 +277,7 @@ export class Fhirfly {
     this.hcc = new HccEndpoint(this.http);
     this.opcs4 = new Opcs4Endpoint(this.http);
     this.dmd = new DmdEndpoint(this.http);
+    this.ucum = new UcumEndpoint(this.http);
+    this.rxclass = new RxClassEndpoint(this.http);
   }
 }

@@ -69,6 +69,8 @@ export type {
   NpiData,
   NpiSearchParams,
   // RxNorm
+  DrugClassEntry,
+  Contraindication,
   RxNormFhirCoding,
   RxTermType,
   RxNormCompact,
@@ -96,6 +98,7 @@ export type {
   Icd10Data,
   Icd10SearchParams,
   // CVX
+  CvxNdcCrosswalk,
   CvxCompact,
   CvxStandard,
   CvxFull,
@@ -204,9 +207,30 @@ export type {
   DmdFull,
   DmdData,
   DmdSearchParams,
+  // UCUM
+  UcumFhirCoding,
+  UcumCompact,
+  UcumStandard,
+  UcumFull,
+  UcumData,
+  UcumSearchParams,
+  UcumValidateComponent,
+  UcumValidateResult,
+  UcumConvertResult,
+  // RxClass
+  RxClassFhirCoding,
+  RxClassCompact,
+  RxClassStandard,
+  RxClassFull,
+  RxClassData,
+  RxClassSearchParams,
+  RxClassMember,
+  RxClassMembersResponse,
 } from "./types/index.js";
 
 // Endpoint classes
 export { HccEndpoint, type HccReverseLookupOptions } from "./endpoints/hcc.js";
 export { Opcs4Endpoint } from "./endpoints/opcs4.js";
 export { DmdEndpoint } from "./endpoints/dmd.js";
+export { UcumEndpoint } from "./endpoints/ucum.js";
+export { RxClassEndpoint } from "./endpoints/rxclass.js";

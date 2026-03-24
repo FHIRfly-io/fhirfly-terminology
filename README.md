@@ -30,7 +30,7 @@ console.log(npi.data.name);
 ## Features
 
 - **Full TypeScript support** with comprehensive type definitions
-- **11 healthcare domains**: NDC, NPI, RxNorm, LOINC, ICD-10, CVX, MVX, FDA Labels, SNOMED CT, Connectivity, Claims
+- **13 healthcare domains**: NDC, NPI, RxNorm, LOINC, ICD-10, CVX, MVX, FDA Labels, SNOMED CT, UCUM, RxClass, Connectivity, Claims
 - **Search** with full-text queries, filters, facets, and pagination
 - **Batch lookups** for efficient bulk operations
 - **Response shapes**: compact, standard, or full detail levels
@@ -246,6 +246,53 @@ const categories = await client.snomed.categories();
 const mappings = await client.snomed.mappings("73211009");
 ```
 
+### UCUM (Units of Measure)
+
+Unified Code for Units of Measure — lookup, validate, search, and convert healthcare units.
+
+```typescript
+// Look up a UCUM unit
+const unit = await client.ucum.lookup("mg");
+console.log(unit.data.display); // "milligram"
+
+// Validate a UCUM expression
+const validation = await client.ucum.validate("mg/dL");
+console.log(validation.data.is_valid); // true
+
+// Search for units
+const results = await client.ucum.search({ q: "milligram" });
+
+// Convert between units
+const conversion = await client.ucum.convert({
+  value: 1000,
+  from: "mg",
+  to: "g",
+});
+console.log(conversion.data.result); // 1
+```
+
+### RxClass (Drug Classifications)
+
+RxClass drug classification hierarchy from NLM — look up drug classes, search, and find class members.
+
+```typescript
+// Look up a drug class
+const rxclass = await client.rxclass.lookup("N0000175503");
+console.log(rxclass.data.class_name); // "HMG-CoA Reductase Inhibitors"
+
+// Search for drug classes
+const results = await client.rxclass.search({
+  q: "statin",
+  class_type: "EPC",
+});
+
+// Get members of a drug class (drugs belonging to the class)
+const members = await client.rxclass.members("N0000175503");
+for (const drug of members.data.members) {
+  console.log(`${drug.rxcui}: ${drug.name}`);
+}
+```
+
 ### Connectivity Intelligence
 
 Discover how to reach a provider's organization electronically — FHIR endpoints, Direct addresses, and more.
@@ -310,11 +357,11 @@ All lookup and search methods accept a `shape` option to control response detail
 const ndc = await client.ndc.lookup("0069-0151-01", { shape: "full" });
 ```
 
-**Exceptions**: SNOMED always returns full data (no shapes). FDA Labels lookup uses a metadata + sections model instead of shapes; search uses shapes.
+**Exceptions**: SNOMED always returns full data (no shapes). FDA Labels lookup uses a metadata + sections model instead of shapes; search uses shapes. UCUM validate and convert return fixed result shapes (no shape parameter).
 
 ## Search
 
-All endpoints except Connectivity support full-text search with filters, facets, and pagination:
+All endpoints except Connectivity and RxClass members support full-text search with filters, facets, and pagination:
 
 ```typescript
 const results = await client.ndc.search(

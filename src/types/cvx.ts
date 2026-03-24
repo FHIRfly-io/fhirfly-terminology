@@ -3,6 +3,21 @@
 import type { DisplayField } from "./common.js";
 
 /**
+ * NDC crosswalk entry for a CVX vaccine code.
+ * Returned when `include=crosswalks` is used.
+ */
+export interface CvxNdcCrosswalk {
+  ndc: string;
+  ndc11: string;
+  product_ndc: string;
+  trade_name: string | null;
+  manufacturer: string | null;
+  begin_date: string | null;
+  end_date: string | null;
+  source: string;
+}
+
+/**
  * CVX vaccine code lookup result - compact shape.
  */
 export interface CvxCompact extends DisplayField {
@@ -21,6 +36,8 @@ export interface CvxStandard extends CvxCompact {
   is_covid_vaccine: boolean;
   vaccine_type: string | null;
   last_updated_by_cdc?: string | null;
+  /** NDC crosswalks for this vaccine (included when `include=crosswalks`) */
+  crosswalks?: { ndc: CvxNdcCrosswalk[] };
 }
 
 /**

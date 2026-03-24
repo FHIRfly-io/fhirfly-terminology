@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root.
 import type { DisplayField } from "./common.js";
 import type { SnomedEnrichmentStandard, SnomedEnrichmentFull } from "./snomed.js";
+import type { DrugClassEntry, Contraindication } from "./rxnorm.js";
 
 /**
  * Active ingredient in a drug product (full shape only).
@@ -62,6 +63,10 @@ export interface NdcStandard extends DisplayField {
   is_active: boolean;
   /** FHIR coding for this NDC */
   fhir_coding?: NdcFhirCoding;
+  /** Drug class classifications (derived via RxNorm rxcui join, added by enrichment) */
+  drug_classes?: DrugClassEntry[];
+  /** RxCUI used to derive enrichment fields */
+  enriched_from?: string;
   /** SNOMED CT mappings (derived via RxNorm, added by enrichment) */
   snomed?: SnomedEnrichmentStandard[];
 }
@@ -98,6 +103,12 @@ export interface NdcFull extends DisplayField {
   active_ingredients: ActiveIngredient[];
   pharm_class: string[];
   dea_schedule: string | null;
+  /** Drug class classifications (derived via RxNorm rxcui join, added by enrichment) */
+  drug_classes?: DrugClassEntry[];
+  /** Drug contraindications (derived via RxNorm rxcui join, added by enrichment, full shape only) */
+  contraindications?: Contraindication[];
+  /** RxCUI used to derive enrichment fields */
+  enriched_from?: string;
   /** SNOMED CT mappings with FHIR coding (derived via RxNorm, added by enrichment) */
   snomed?: SnomedEnrichmentFull[];
 }

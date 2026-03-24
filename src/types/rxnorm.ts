@@ -4,6 +4,28 @@ import type { DisplayField } from "./common.js";
 import type { SnomedEnrichmentStandard, SnomedEnrichmentFull } from "./snomed.js";
 
 /**
+ * Drug class entry from RxClass enrichment.
+ */
+export interface DrugClassEntry {
+  class_id: string;
+  class_name: string;
+  class_type: string;
+  source: string;
+}
+
+/**
+ * Drug contraindication from enrichment.
+ */
+export interface Contraindication {
+  disease_name: string;
+  disease_id: string;
+  disease_snomed: string | null;
+  severity: string | null;
+  relationship: string;
+  source: string;
+}
+
+/**
  * RxNorm term type (TTY).
  */
 /**
@@ -60,6 +82,8 @@ export interface RxNormStandard extends RxNormCompact {
   }>;
   /** FHIR coding for this RxNorm concept */
   fhir_coding?: RxNormFhirCoding;
+  /** Drug class classifications (added by enrichment) */
+  drug_classes?: DrugClassEntry[];
   /** SNOMED CT mappings (added by enrichment) */
   snomed?: SnomedEnrichmentStandard[];
 }
@@ -83,6 +107,10 @@ export interface RxNormFull extends Omit<RxNormStandard, "snomed"> {
     relation: string;
   }>;
   ndcs?: string[];
+  /** Drug class classifications (added by enrichment) */
+  drug_classes?: DrugClassEntry[];
+  /** Drug contraindications (added by enrichment, full shape only) */
+  contraindications?: Contraindication[];
   /** SNOMED CT mappings with FHIR coding (added by enrichment) */
   snomed?: SnomedEnrichmentFull[];
 }
