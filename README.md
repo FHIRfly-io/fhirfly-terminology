@@ -30,7 +30,7 @@ console.log(npi.data.name);
 ## Features
 
 - **Full TypeScript support** with comprehensive type definitions
-- **13 healthcare domains**: NDC, NPI, RxNorm, LOINC, ICD-10, CVX, MVX, FDA Labels, SNOMED CT, UCUM, RxClass, Connectivity, Claims
+- **17 healthcare domains**: NDC, NPI, RxNorm, LOINC, ICD-10, CVX, MVX, FDA Labels, SNOMED CT, UCUM, RxClass, HCPCS, MS-DRG, POS, J-Code/NDC Crosswalk, Connectivity, Claims
 - **Search** with full-text queries, filters, facets, and pagination
 - **Batch lookups** for efficient bulk operations
 - **Response shapes**: compact, standard, or full detail levels
@@ -290,6 +290,63 @@ const results = await client.rxclass.search({
 const members = await client.rxclass.members("N0000175503");
 for (const drug of members.data.members) {
   console.log(`${drug.rxcui}: ${drug.name}`);
+}
+```
+
+### HCPCS Level II
+
+```typescript
+// Look up a procedure code
+const hcpcs = await client.hcpcs.lookup("A0425");
+console.log(hcpcs.data.short_description); // "Ground mileage, per statute mile"
+
+// Look up a modifier
+const mod = await client.hcpcs.lookupModifier("25");
+console.log(mod.data.short_description);
+
+// Batch lookup (up to 100)
+const results = await client.hcpcs.lookupMany(["A0425", "E0100"]);
+
+// Search
+const results = await client.hcpcs.search({ q: "ambulance" });
+```
+
+### MS-DRG (Diagnosis Related Groups)
+
+```typescript
+// Look up a DRG code
+const drg = await client.msdrg.lookup("470");
+console.log(drg.data.title); // "Major Joint Replacement..."
+
+// Search
+const results = await client.msdrg.search({
+  q: "cardiac",
+  type: "SURG",
+});
+```
+
+### POS (Place of Service)
+
+```typescript
+// Look up a POS code
+const pos = await client.pos.lookup("11");
+console.log(pos.data.name); // "Office"
+
+// List all POS codes (~52 total)
+const all = await client.pos.list();
+```
+
+### J-Code/NDC Crosswalk
+
+```typescript
+// J-code → NDCs (which NDCs map to this J-code?)
+const jcode = await client.jcode.byHcpcs("J9035");
+console.log(`${jcode.data.ndc_count} NDCs for ${jcode.data.hcpcs_description}`);
+
+// NDC → J-codes (which J-codes cover this NDC?)
+const reverse = await client.jcode.byNdc("00004110002");
+for (const entry of reverse.data.hcpcs_codes) {
+  console.log(`${entry.hcpcs_code}: ${entry.hcpcs_description}`);
 }
 ```
 

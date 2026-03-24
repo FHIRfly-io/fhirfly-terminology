@@ -249,3 +249,46 @@ export type {
   RxClassMember,
   RxClassMembersResponse,
 } from "./rxclass.js";
+
+// HCPCS types
+export type {
+  HcpcsFhirCoding,
+  HcpcsCompact,
+  HcpcsStandard,
+  HcpcsFull,
+  HcpcsData,
+  HcpcsModifierCompact,
+  HcpcsModifierStandard,
+  HcpcsModifierFull,
+  HcpcsModifierData,
+  HcpcsSearchParams,
+} from "./hcpcs.js";
+
+// MS-DRG types
+export type {
+  MsdrgFhirCoding,
+  MsdrgCompact,
+  MsdrgStandard,
+  MsdrgFull,
+  MsdrgData,
+  MsdrgSearchParams,
+} from "./msdrg.js";
+
+// POS types
+export type {
+  PosFhirCoding,
+  PosCompact,
+  PosStandard,
+  PosFull,
+  PosData,
+  PosListResponse,
+} from "./pos.js";
+
+// J-Code types
+export type {
+  JcodeNdcEntry,
+  JcodeByHcpcsResponse,
+  JcodeByNdcHcpcsEntry,
+  JcodeByNdcResponse,
+  JcodeMeta,
+} from "./jcode.js";

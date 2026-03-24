@@ -226,6 +226,37 @@ export type {
   RxClassSearchParams,
   RxClassMember,
   RxClassMembersResponse,
+  // HCPCS
+  HcpcsFhirCoding,
+  HcpcsCompact,
+  HcpcsStandard,
+  HcpcsFull,
+  HcpcsData,
+  HcpcsModifierCompact,
+  HcpcsModifierStandard,
+  HcpcsModifierFull,
+  HcpcsModifierData,
+  HcpcsSearchParams,
+  // MS-DRG
+  MsdrgFhirCoding,
+  MsdrgCompact,
+  MsdrgStandard,
+  MsdrgFull,
+  MsdrgData,
+  MsdrgSearchParams,
+  // POS
+  PosFhirCoding,
+  PosCompact,
+  PosStandard,
+  PosFull,
+  PosData,
+  PosListResponse,
+  // J-Code
+  JcodeNdcEntry,
+  JcodeByHcpcsResponse,
+  JcodeByNdcHcpcsEntry,
+  JcodeByNdcResponse,
+  JcodeMeta,
 } from "./types/index.js";
 
 // Endpoint classes
@@ -234,3 +265,7 @@ export { Opcs4Endpoint } from "./endpoints/opcs4.js";
 export { DmdEndpoint } from "./endpoints/dmd.js";
 export { UcumEndpoint } from "./endpoints/ucum.js";
 export { RxClassEndpoint } from "./endpoints/rxclass.js";
+export { HcpcsEndpoint } from "./endpoints/hcpcs.js";
+export { MsdrgEndpoint } from "./endpoints/msdrg.js";
+export { PosEndpoint } from "./endpoints/pos.js";
+export { JcodeEndpoint } from "./endpoints/jcode.js";

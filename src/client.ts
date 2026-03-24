@@ -18,6 +18,10 @@ import { Opcs4Endpoint } from "./endpoints/opcs4.js";
 import { DmdEndpoint } from "./endpoints/dmd.js";
 import { UcumEndpoint } from "./endpoints/ucum.js";
 import { RxClassEndpoint } from "./endpoints/rxclass.js";
+import { HcpcsEndpoint } from "./endpoints/hcpcs.js";
+import { MsdrgEndpoint } from "./endpoints/msdrg.js";
+import { PosEndpoint } from "./endpoints/pos.js";
+import { JcodeEndpoint } from "./endpoints/jcode.js";
 
 /**
  * Base configuration options shared by all auth modes.
@@ -221,6 +225,30 @@ export class Fhirfly {
   readonly rxclass: RxClassEndpoint;
 
   /**
+   * HCPCS Level II procedure and supply code lookups.
+   * CMS codes for non-physician services, supplies, and equipment.
+   */
+  readonly hcpcs: HcpcsEndpoint;
+
+  /**
+   * MS-DRG (Medicare Severity Diagnosis Related Group) lookups.
+   * Inpatient hospital payment classifications with weights and length of stay.
+   */
+  readonly msdrg: MsdrgEndpoint;
+
+  /**
+   * Place of Service code lookups.
+   * CMS codes identifying where healthcare services were rendered.
+   */
+  readonly pos: PosEndpoint;
+
+  /**
+   * J-Code/NDC crosswalk lookups.
+   * Bidirectional mapping between HCPCS J-codes and NDC drug codes.
+   */
+  readonly jcode: JcodeEndpoint;
+
+  /**
    * Create a new FHIRfly client.
    *
    * @param config - Client configuration (API key or OAuth2 client credentials)
@@ -279,5 +307,9 @@ export class Fhirfly {
     this.dmd = new DmdEndpoint(this.http);
     this.ucum = new UcumEndpoint(this.http);
     this.rxclass = new RxClassEndpoint(this.http);
+    this.hcpcs = new HcpcsEndpoint(this.http);
+    this.msdrg = new MsdrgEndpoint(this.http);
+    this.pos = new PosEndpoint(this.http);
+    this.jcode = new JcodeEndpoint(this.http);
   }
 }
