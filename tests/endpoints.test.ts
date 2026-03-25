@@ -1640,4 +1640,80 @@ describe("Endpoint lookup methods", () => {
       expect(opts.headers["User-Agent"]).toContain("@fhirfly-io/terminology");
     });
   });
+
+  // ===========================================================================
+  // DDI endpoint
+  // ===========================================================================
+  describe("DDI endpoint", () => {
+    describe("reference", () => {
+      it("makes GET request to correct URL", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            data: {
+              drug: { rxcui: "161", name: "Acetaminophen", tty: "IN", brand_names: [], generic_name: [], substance_name: [], pharm_class_epc: [], ingredients: [], drug_classes: [] },
+              label: { spl_id: "abc", set_id: "def", sections: { drug_interactions: ["text"] }, dailymed_url: "https://dailymed.nlm.nih.gov/..." },
+            },
+            meta: { legal: { license: "public_domain", attribution_required: false, sources: [], disclaimer: "" } },
+          })
+        );
+
+        const result = await client.ddi.reference("161");
+
+        const [url, opts] = mockFetch.mock.calls[0]!;
+        expect(url).toBe("https://api.fhirfly.io/v1/ddi/reference/161");
+        expect(opts.method).toBe("GET");
+        expect(result.data.drug.rxcui).toBe("161");
+      });
+
+      it("adds sections query param when provided", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            data: {
+              drug: { rxcui: "161", name: "Acetaminophen", tty: "IN", brand_names: [], generic_name: [], substance_name: [], pharm_class_epc: [], ingredients: [], drug_classes: [] },
+              label: { spl_id: "abc", set_id: "def", sections: { drug_interactions: ["text"] }, dailymed_url: "https://dailymed.nlm.nih.gov/..." },
+            },
+            meta: { legal: { license: "public_domain", attribution_required: false, sources: [], disclaimer: "" } },
+          })
+        );
+
+        await client.ddi.reference("161", { sections: ["drug_interactions", "warnings"] });
+
+        const [url] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("sections=drug_interactions%2Cwarnings");
+      });
+    });
+
+    describe("referenceMany", () => {
+      it("makes POST request with correct body", async () => {
+        mockFetch.mockResolvedValueOnce(
+          jsonResponse({
+            count: 2,
+            drugs: [
+              { input: "161", status: "ok", drug: { rxcui: "161", name: "Acetaminophen" }, label: { spl_id: "abc" } },
+              { input: "1191", status: "ok", drug: { rxcui: "1191", name: "Aspirin" }, label: { spl_id: "def" } },
+            ],
+            meta: { legal: { license: "public_domain", attribution_required: false, sources: [], disclaimer: "" } },
+          })
+        );
+
+        const result = await client.ddi.referenceMany(["161", "1191"]);
+
+        const [url, opts] = mockFetch.mock.calls[0]!;
+        expect(url).toContain("/v1/ddi/reference");
+        expect(opts.method).toBe("POST");
+        const body = JSON.parse(opts.body);
+        expect(body.drugs).toEqual(["161", "1191"]);
+        expect(result.count).toBe(2);
+      });
+
+      it("throws ValidationError for empty array", async () => {
+        await expect(client.ddi.referenceMany([])).rejects.toThrow(ValidationError);
+      });
+
+      it("throws ValidationError for more than 25 drugs", async () => {
+        const drugs = Array.from({ length: 26 }, (_, i) => String(i));
+        await expect(client.ddi.referenceMany(drugs)).rejects.toThrow(ValidationError);
+      });
+    });
+  });
 });

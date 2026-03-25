@@ -292,3 +292,16 @@ export type {
   JcodeByNdcResponse,
   JcodeMeta,
 } from "./jcode.js";
+
+// DDI types
+export type {
+  DdiIngredient,
+  DdiDrugClassEntry,
+  DdiDrugInfo,
+  DdiLabelInfo,
+  DdiDrugResult,
+  DdiReferenceResponse,
+  DdiBatchResponse,
+  DdiMeta,
+  DdiLegalInfo,
+} from "./ddi.js";

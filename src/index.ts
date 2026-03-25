@@ -257,6 +257,15 @@ export type {
   JcodeByNdcHcpcsEntry,
   JcodeByNdcResponse,
   JcodeMeta,
+  DdiIngredient,
+  DdiDrugClassEntry,
+  DdiDrugInfo,
+  DdiLabelInfo,
+  DdiDrugResult,
+  DdiReferenceResponse,
+  DdiBatchResponse,
+  DdiMeta,
+  DdiLegalInfo,
 } from "./types/index.js";
 
 // Endpoint classes
@@ -269,3 +278,4 @@ export { HcpcsEndpoint } from "./endpoints/hcpcs.js";
 export { MsdrgEndpoint } from "./endpoints/msdrg.js";
 export { PosEndpoint } from "./endpoints/pos.js";
 export { JcodeEndpoint } from "./endpoints/jcode.js";
+export { DdiEndpoint } from "./endpoints/ddi.js";

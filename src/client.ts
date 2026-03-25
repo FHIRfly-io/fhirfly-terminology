@@ -22,6 +22,7 @@ import { HcpcsEndpoint } from "./endpoints/hcpcs.js";
 import { MsdrgEndpoint } from "./endpoints/msdrg.js";
 import { PosEndpoint } from "./endpoints/pos.js";
 import { JcodeEndpoint } from "./endpoints/jcode.js";
+import { DdiEndpoint } from "./endpoints/ddi.js";
 
 /**
  * Base configuration options shared by all auth modes.
@@ -249,6 +250,11 @@ export class Fhirfly {
   readonly jcode: JcodeEndpoint;
 
   /**
+   * Drug-Drug Interaction reference — FDA label interaction text + RxNorm enrichment.
+   */
+  readonly ddi: DdiEndpoint;
+
+  /**
    * Create a new FHIRfly client.
    *
    * @param config - Client configuration (API key or OAuth2 client credentials)
@@ -311,5 +317,6 @@ export class Fhirfly {
     this.msdrg = new MsdrgEndpoint(this.http);
     this.pos = new PosEndpoint(this.http);
     this.jcode = new JcodeEndpoint(this.http);
+    this.ddi = new DdiEndpoint(this.http);
   }
 }

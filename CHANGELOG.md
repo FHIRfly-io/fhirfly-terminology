@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.14.0] - 2026-03-25
+
+### Added
+- DDI Reference endpoint: `ddi.reference()` and `ddi.referenceMany()` for multi-drug interaction lookups
+- Returns FDA-approved interaction text, warnings, RxNorm drug classes, ingredients, and DailyMed links
+
 All notable changes to this project will be documented in this file.
 
 ## [0.10.1] - 2026-03-10
