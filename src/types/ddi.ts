@@ -65,3 +65,4 @@ export interface DdiBatchResponse {
   drugs: DdiDrugResult[];
   meta: DdiMeta;
 }
+

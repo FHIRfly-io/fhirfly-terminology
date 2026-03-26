@@ -55,4 +55,5 @@ export class DdiEndpoint {
     }
     return this.http.post<DdiBatchResponse>("/v1/ddi/reference", body);
   }
+
 }
