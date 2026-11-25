@@ -19,7 +19,7 @@ import { Fhirfly } from "@fhirfly-io/terminology";
 const client = new Fhirfly({ apiKey: "your-api-key" });
 
 // Look up a drug by NDC
-const ndc = await client.ndc.lookup("0069-0151-01");
+const ndc = await client.ndc.lookup("58151-155-77");
 console.log(ndc.data.brand_name); // "Lipitor"
 
 // Look up a provider by NPI
@@ -72,18 +72,18 @@ OAuth2 tokens are cached and automatically refreshed before expiry.
 
 ```typescript
 // Single lookup
-const ndc = await client.ndc.lookup("0069-0151-01");
+const ndc = await client.ndc.lookup("58151-155-77");
 
 // With options
-const ndc = await client.ndc.lookup("0069-0151-01", {
+const ndc = await client.ndc.lookup("58151-155-77", {
   shape: "full",           // "compact" | "standard" | "full"
   include: ["display"],    // Include pre-formatted display strings
 });
 
 // Batch lookup (up to 500 codes)
 const results = await client.ndc.lookupMany([
-  "0069-0151-01",
-  "0069-0151-02",
+  "58151-155-77",
+  "0002-8215-01",
 ]);
 
 for (const item of results.results) {
@@ -199,20 +199,20 @@ const results = await client.mvx.search({ q: "pfizer" });
 
 ```typescript
 // Look up by Set ID, NDC, or RxCUI (auto-detected)
-const label = await client.fdaLabels.lookup("0069-0151-01");
+const label = await client.fdaLabels.lookup("58151-155-77");
 
 // With safety sections
-const label = await client.fdaLabels.lookup("0069-0151-01", {
+const label = await client.fdaLabels.lookup("58151-155-77", {
   bundle: "safety",
 });
 
 // With specific sections
-const label = await client.fdaLabels.lookup("0069-0151-01", {
+const label = await client.fdaLabels.lookup("58151-155-77", {
   sections: ["boxed_warning", "dosage_and_administration"],
 });
 
 // Batch (up to 50, metadata only)
-const results = await client.fdaLabels.lookupMany(["0069-0151-01", "0002-1433-80"]);
+const results = await client.fdaLabels.lookupMany(["58151-155-77", "0002-1433-80"]);
 
 // Search
 const results = await client.fdaLabels.search({
@@ -411,7 +411,7 @@ All lookup and search methods accept a `shape` option to control response detail
 | `full` | Complete data with provenance (default for MCP/agents) |
 
 ```typescript
-const ndc = await client.ndc.lookup("0069-0151-01", { shape: "full" });
+const ndc = await client.ndc.lookup("58151-155-77", { shape: "full" });
 ```
 
 **Exceptions**: SNOMED always returns full data (no shapes). FDA Labels lookup uses a metadata + sections model instead of shapes; search uses shapes. UCUM validate and convert return fixed result shapes (no shape parameter).

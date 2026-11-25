@@ -13,7 +13,7 @@
 export interface SmaListOptions {
   /** Filter by implementation status */
   implemented?: boolean;
-  /** Filter by API vendor (e.g., "Epic") */
+  /** Filter by API vendor. Matches nothing since CMS stopped publishing the vendor (March 2026). */
   vendor?: string;
   /** Filter by patient access status */
   status?: string;
@@ -33,7 +33,7 @@ export interface SmaStateSummary {
   abbreviation: string | null;
   /** Whether the state has implemented FHIR endpoints */
   is_implemented: boolean;
-  /** API vendor (e.g., "Epic") or null */
+  /** API vendor. Always null: CMS stopped publishing the vendor in the SMA Endpoint Directory in March 2026. Kept for compatibility. */
   api_vendor: string | null;
   /** Patient access API status */
   patient_access_status: string | null;
@@ -79,7 +79,7 @@ export interface SmaStateDetailResponse {
   state: string;
   /** Two-letter abbreviation or null */
   abbreviation: string | null;
-  /** API vendor or null */
+  /** API vendor. Always null: CMS stopped publishing the vendor in the SMA Endpoint Directory in March 2026. Kept for compatibility. */
   api_vendor: string | null;
   /** Date of most recent survey or null */
   survey_date: string | null;
@@ -140,7 +140,7 @@ export interface SmaStatsResponse {
     not_implemented: number;
     total_production_urls: number;
   };
-  /** Counts by API vendor */
+  /** Counts by API vendor. Empty: CMS stopped publishing the vendor in March 2026. Kept for compatibility. */
   by_vendor: Record<string, number>;
   /** Counts by patient access status */
   by_patient_access_status: Record<string, number>;

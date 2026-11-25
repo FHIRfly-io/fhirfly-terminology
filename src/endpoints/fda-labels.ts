@@ -37,15 +37,15 @@ export class FdaLabelsEndpoint {
    * @example
    * ```ts
    * // Metadata only
-   * const label = await client.fdaLabels.lookup("0069-0151-01");
+   * const label = await client.fdaLabels.lookup("58151-155-77");
    *
    * // With safety sections
-   * const label = await client.fdaLabels.lookup("0069-0151-01", {
+   * const label = await client.fdaLabels.lookup("58151-155-77", {
    *   bundle: "safety"
    * });
    *
    * // With specific sections
-   * const label = await client.fdaLabels.lookup("0069-0151-01", {
+   * const label = await client.fdaLabels.lookup("58151-155-77", {
    *   sections: ["boxed_warning", "dosage_and_administration"]
    * });
    * ```
