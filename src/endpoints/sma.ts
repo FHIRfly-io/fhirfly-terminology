@@ -25,7 +25,7 @@ import type {
  *
  * // Get details for California
  * const ca = await client.sma.getState("CA");
- * console.log(`Vendor: ${ca.api_vendor}`);
+ * console.log(`Patient access: ${ca.patient_access.status}`);
  * console.log(`Claims endpoints: ${ca.patient_access.endpoints.claims.length}`);
  *
  * // Get aggregate statistics
