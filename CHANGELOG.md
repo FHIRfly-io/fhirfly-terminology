@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.14.1] - 2026-11-25
+
+### Changed
+- SMA: `api_vendor` / `vendor` documented as always null. CMS stopped publishing the vendor in the SMA Endpoint Directory in March 2026; the fields are kept for compatibility.
+- Examples use a current NDC (`58151-155-77`, Lipitor 10 mg). The old example `0069-0151-01` no longer resolves.
+
+### Fixed
+- Source maps are no longer included in the published package.
+
 ## [0.14.0] - 2026-03-25
 
 ### Added
