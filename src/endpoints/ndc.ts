@@ -27,7 +27,7 @@ export class NdcEndpoint {
    *
    * @example
    * ```ts
-   * const ndc = await client.ndc.lookup("0069-0151-01");
+   * const ndc = await client.ndc.lookup("58151-155-77");
    * console.log(ndc.data.brand_name); // "Lipitor"
    * ```
    */
@@ -45,8 +45,8 @@ export class NdcEndpoint {
    * @example
    * ```ts
    * const results = await client.ndc.lookupMany([
-   *   "0069-0151-01",
-   *   "0069-0151-02",
+   *   "58151-155-77",
+   *   "0002-8215-01",
    *   "invalid-code"
    * ]);
    *

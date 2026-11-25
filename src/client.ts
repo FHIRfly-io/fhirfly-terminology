@@ -124,7 +124,7 @@ export type FhirflyConfig = FhirflyApiKeyConfig | FhirflyOAuthConfig;
  * });
  *
  * // Look up a drug by NDC
- * const ndc = await client.ndc.lookup("0069-0151-01");
+ * const ndc = await client.ndc.lookup("58151-155-77");
  * console.log(ndc.data.brand_name); // "Lipitor"
  * ```
  */
